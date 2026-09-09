@@ -6,7 +6,7 @@ description: clean up repo formatting in small, reviewable batches
 
 Use this workflow when the repository has widespread Prettier drift and you want to improve formatting without mixing it into unrelated feature or bug-fix changes.
 
-Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
+Read the source-of-truth docs first: [AGENTS.md](../../AGENTS.md) (repo guidance, including the **Validation before declaring done** checklist) and [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) (engineering rules). These playbooks are tool-agnostic: they work with any agentic coding tool (GitHub Copilot, Claude Code, Cursor, Devin, etc.).
 
 ## Goals
 

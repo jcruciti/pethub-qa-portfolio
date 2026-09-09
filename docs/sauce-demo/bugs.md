@@ -47,7 +47,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** the cart badge disappears, but every item that was previously added still shows the **Remove** button. Diagnostic captured `buttonsBefore` and `buttonsAfter` on all five users - they are byte-for-byte identical after Reset.
 - **Expected:** the inventory page should also reset every item's button text back to **Add to cart**.
 - **Severity:** functional; misleads users into thinking items are still in their cart even though the cart is empty.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: reset app state does not clear per-item button state (CU-1)`, parametrised over `standard_user`, `problem_user`, `error_user`, and `visual_user`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `<user>: reset app state does not clear per-item button state (CU-1)`, parametrised over `standard_user`, `problem_user`, `error_user`, and `visual_user`.
 
 ---
 
@@ -71,7 +71,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** the dropdown's selected option visually changes, but the displayed inventory remains in the default order for **all four** sort options. Both names and prices stay in the identical default sequence.
 - **Expected:** Z-A should reverse, lohi should ascend by price, hilo should descend by price.
 - **Severity:** functional. The sort feature is non-functional for this user.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: inventory sort dropdown does not actually reorder items (PU-2 / EU-1)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `<user>: inventory sort dropdown does not actually reorder items (PU-2 / EU-1)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-3: Checkout last-name input writes into the first-name field
 
@@ -88,7 +88,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Expected:** Last Name should accept and retain its own value; the form should advance to `/checkout-step-two.html` once all three fields are filled.
 - **Severity:** blocker. `problem_user` cannot complete a checkout regardless of input.
 - **Possible root cause:** the Last Name input's `onChange` handler is wired to the First Name field's state setter (or both inputs share the same `name`/`id` and the React binding picks the first match). Sharper than the original "lastName rejects input" framing - the typed text is **not** discarded, it just lands in the wrong field.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `problem_user: checkout last-name input clobbers the first-name field (PU-3)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `problem_user: checkout last-name input clobbers the first-name field (PU-3)`.
 
 ### PU-4: Add to cart silently fails on three of the six products
 
@@ -102,7 +102,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - Confirmed by visiting `/cart.html` after attempting all six: cart contains exactly 3 items (Backpack, Bike Light, Onesie).
 - **Expected:** every Add to cart click should add the item and increment the badge.
 - **Severity:** blocker. Half of the catalogue cannot be purchased.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: Add to cart silently fails on Bolt T-Shirt / Fleece Jacket / TATT (PU-4 / EU-4)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `<user>: Add to cart silently fails on Bolt T-Shirt / Fleece Jacket / TATT (PU-4 / EU-4)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-5: Remove button on the inventory page is non-functional
 
@@ -113,7 +113,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** button text stays as **Remove**, cart badge stays at 3. The same is true for Bike Light and Onesie. None of the items can be removed from the inventory page.
 - **Expected:** Remove should flip the button back to **Add to cart** and decrement the badge.
 - **Severity:** functional. The user cannot back out of the cart from the inventory page; they would have to go through `/cart.html` to remove items, which the diagnostic did not exhaustively re-verify.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: Remove button on inventory page is non-functional (PU-5 / EU-5)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `<user>: Remove button on inventory page is non-functional (PU-5 / EU-5)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-6: Inventory item title links are off-by-one
 
@@ -133,7 +133,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 
 - **Expected:** clicking each title should open that item's own detail page.
 - **Severity:** functional / data integrity. Combined with PU-1 (every inventory image is the placeholder) the user has no reliable way to identify which product is which on the catalogue page.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → 5 parametrised `problem_user: clicking '<item>' opens id=<n+1> instead of id=<n> (PU-6)` tests + edge case `problem_user: clicking 'Sauce Labs Fleece Jacket' opens id=6 and renders the 404 placeholder (PU-6 edge)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → 5 parametrised `problem_user: clicking '<item>' opens id=<n+1> instead of id=<n> (PU-6)` tests + edge case `problem_user: clicking 'Sauce Labs Fleece Jacket' opens id=6 and renders the 404 placeholder (PU-6 edge)`.
 
 ---
 
@@ -168,7 +168,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - Unlike `problem_user`, clicking Continue advances to `/checkout-step-two.html` with no validation error.
 - **Expected:** the form should reject an empty last name and stay on step one with an error message (matching `standard_user` behaviour).
 - **Severity:** functional / data integrity. Orders can be created with no last name attached.
-- **Coverage:** combined with EU-6, asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `error_user: checkout form skips last-name validation and advances with empty lastName (EU-2 / EU-6)`.
+- **Coverage:** combined with EU-6, asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `error_user: checkout form skips last-name validation and advances with empty lastName (EU-2 / EU-6)`.
 
 ### EU-3: Finish button throws a JavaScript error and never completes the order
 
@@ -185,7 +185,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Expected:** Finish should clear the cart and navigate to `/checkout-complete.html` showing **Thank you for your order!**.
 - **Severity:** blocker. `error_user` cannot complete an order.
 - **Note:** the CORS / 401 errors are the error-reporting backend (Backtrace) being unreachable; they are a side effect, not the root cause. The page-error message is the actionable signal.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `error_user: clicking Finish triggers a JS error and never lands on checkout-complete (EU-3)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `error_user: clicking Finish triggers a JS error and never lands on checkout-complete (EU-3)`.
 
 ### EU-4: Add to cart silently fails on three of the six products
 
@@ -221,7 +221,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** the first item (Sauce Labs Backpack) renders `/static/media/sl-404.168b1cce10384b857a6f.jpg`. The other five items render their correct images.
 - **Expected:** Backpack should render `/static/media/sauce-backpack-1200x1500.<hash>.jpg`.
 - **Severity:** visual.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: first inventory item image is the 404 placeholder (VU-1)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `visual_user: first inventory item image is the 404 placeholder (VU-1)`.
 
 ### VU-2: Inventory page prices are randomised on every render
 
@@ -237,7 +237,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - After hilo sort: `[60.76, 20.59, 45.76, 90.37, 19.51, 28.2]`
 - **Expected:** stable real prices `[29.99, 9.99, 15.99, 49.99, 7.99, 15.99]` for `standard_user`.
 - **Severity:** data integrity. Price displayed on the catalogue is meaningless.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: inventory prices change between renders (VU-2)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `visual_user: inventory prices change between renders (VU-2)`.
 
 ### VU-3: Sort uses real prices but displays randomised prices
 
@@ -245,7 +245,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** when sorting low-to-high or high-to-low, the **item order** matches what `standard_user` produces (i.e. the catalogue sort uses the real prices). However, the **displayed prices** alongside each card are still random and do not reflect any low-to-high or high-to-low ordering.
 - **Expected:** displayed prices and sort order should agree.
 - **Severity:** data integrity / consistency.
-- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: sort uses real prices for ordering but displays random prices (VU-3)`.
+- **Coverage:** asserted by `tests/external/sauce-demo/ui/known-defects.spec.ts` → `visual_user: sort uses real prices for ordering but displays random prices (VU-3)`.
 
 ### VU-4: Cart and checkout prices are correct despite VU-2 / VU-3
 

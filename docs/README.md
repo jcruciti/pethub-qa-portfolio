@@ -2,7 +2,7 @@
 
 Reference docs for the portfolio, organized **system-first** to mirror the rest
 of the repo (`src/pages/<system>/`, and tests split by ownership into
-`tests/dev/pethub-local/` for our own app and `tests/qa/<system>/` for external
+`tests/local/pethub-local/` for our own app and `tests/external/<system>/` for external
 targets).
 
 For the project overview and setup, start with the root
@@ -23,13 +23,31 @@ backlog live in [PROGRESS.md](../PROGRESS.md).
 ## `sauce-demo/` - public UI target
 
 - [bugs.md](sauce-demo/bugs.md) - documented known defects asserted on purpose by
-  `tests/qa/sauce-demo/ui/known-defects.spec.ts` (`bugs.pdf` is the
+  `tests/external/sauce-demo/ui/known-defects.spec.ts` (`bugs.pdf` is the
   generated PDF export).
 
 ## `swagger-petstore/` - public API + UI target
 
 - [bugs.md](swagger-petstore/bugs.md) - documented API defects pinned by the
   Swagger Petstore API specs (`bugs.pdf` is the generated PDF export).
+
+## `workflows/` - AI workflow playbooks
+
+Tool-agnostic Markdown playbooks (usable with any AI coding tool) for planning,
+generating, healing, and reviewing the Playwright suite:
+
+- [ai-test-planner.md](workflows/ai-test-planner.md) - turn a requirement, bug
+  report, or user flow into a concrete Playwright test plan.
+- [ai-test-generator.md](workflows/ai-test-generator.md) - generate tests and
+  supporting code that match repo conventions.
+- [ai-test-healer.md](workflows/ai-test-healer.md) - analyze failing tests and
+  propose safe, minimal fixes.
+- [ai-coverage-assistant.md](workflows/ai-coverage-assistant.md) - compare
+  current coverage against requested scope and find gaps.
+- [formatting-cleanup.md](workflows/formatting-cleanup.md) - fix widespread
+  Prettier drift in small, reviewable batches.
+- [repo-revival.md](workflows/repo-revival.md) - revive the repo after a long
+  absence (months or years).
 
 ## `screenshots/`
 

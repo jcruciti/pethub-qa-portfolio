@@ -6,7 +6,7 @@ description: compare current Playwright coverage against Swagger Petstore featur
 
 Use this workflow to compare the existing framework against requested coverage and identify missing tests.
 
-Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
+Read the source-of-truth docs first: [AGENTS.md](../../AGENTS.md) (repo guidance, including the **Validation before declaring done** checklist) and [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) (engineering rules). These playbooks are tool-agnostic: they work with any agentic coding tool (GitHub Copilot, Claude Code, Cursor, Devin, etc.).
 
 ## Coverage review process
 

@@ -6,7 +6,7 @@ description: analyze failing Playwright tests and propose safe, minimal fixes
 
 Use this workflow when a Playwright test fails and you want AI to diagnose the failure and propose a reviewable fix.
 
-Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
+Read the source-of-truth docs first: [AGENTS.md](../../AGENTS.md) (repo guidance, including the **Validation before declaring done** checklist) and [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) (engineering rules). These playbooks are tool-agnostic: they work with any agentic coding tool (GitHub Copilot, Claude Code, Cursor, Devin, etc.).
 
 ## Inputs
 

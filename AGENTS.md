@@ -1,8 +1,9 @@
 # AGENTS.md
 
 Guidance for AI coding agents working in this repository. This is the **single
-source of truth** for agents. Tool-specific files (e.g.
-`.github/copilot-instructions.md`) are thin pointers back to this file.
+source of truth** for agents. AI coding tools (GitHub Copilot, Claude Code,
+Cursor, Devin, etc.) read this file directly, so no per-tool instruction files
+are maintained.
 
 ## What this project is
 
@@ -25,8 +26,9 @@ systems:
 - **Overview & setup** - [README.md](README.md).
 - **Status, backlog, tech-debt** - [PROGRESS.md](PROGRESS.md). Update it when you
   finish meaningful work or discover/resolve tech-debt.
-- **AI task playbooks** - `.windsurf/workflows/` (planner, generator, healer,
-  coverage assistant, repo-revival). Reuse these flows; don't duplicate them.
+- **AI task playbooks** - `docs/workflows/` (planner, generator, healer,
+  coverage assistant, repo-revival, formatting-cleanup). Reuse these flows;
+  don't duplicate them.
 
 ## Architecture map
 
@@ -48,8 +50,8 @@ src/
                           requests/ + expected/ for API payloads & assertions
   models/api/             DTOs / typed transport
   helpers/                a11y, test-data, unique-id, random-data-generator, sql/
-tests/dev/pethub-local/{ui,api,a11y}/   specs for our own in-repo app
-tests/qa/<external>/{ui,api}/            specs for external third-party targets
+tests/local/pethub-local/{ui,api,a11y}/   specs for our own in-repo app
+tests/external/<system>/{ui,api}/            specs for external third-party targets
 test-targets.config.ts    URL registry with env overrides + defaults
 playwright.config.ts          external targets (parallel)
 playwright.local.config.ts    pethub-local (serial, workers:1, webServer, globalSetup)

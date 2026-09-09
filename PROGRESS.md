@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-06-17_
+_Last updated: 2026-09-09_
 
 ---
 
@@ -23,8 +23,8 @@ _Last updated: 2026-06-17_
   weekly cron to detect external-target drift.
 - **Tooling**: ESLint 10 (flat config) + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 24),
   `npm run doctor`, screenshot/PDF helper scripts.
-- **AI assist**: `.windsurf/workflows/*` (plan / generate / heal / coverage /
-  repo-revival), plus `AGENTS.md` + `.github/copilot-instructions.md`.
+- **AI assist**: `docs/workflows/*` (plan / generate / heal / coverage /
+  repo-revival / formatting-cleanup), plus `AGENTS.md` as the single guidance file.
 
 ## 2. Resume on a new machine (checklist)
 
@@ -40,7 +40,7 @@ _Last updated: 2026-06-17_
 7. **Run tests** - `npm test` (external then local), or `npm run test:local` for
    the deterministic suite only.
 
-> See also `.windsurf/workflows/repo-revival.md` for the longer revival routine.
+> See also [docs/workflows/repo-revival.md](docs/workflows/repo-revival.md) for the longer revival routine.
 
 ## 3. Test inventory by target
 
@@ -69,6 +69,30 @@ _Last updated: 2026-06-17_
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-09-09** - **Retired the `.windsurf` namespace; made the AI workflow
+  playbooks tool-agnostic.** Windsurf was renamed to Devin and the repo is
+  developed in VS Code + GitHub Copilot, so the `.windsurf/workflows/*` path no
+  longer matched how the project is worked on. The six playbooks (planner,
+  generator, healer, coverage, repo-revival, formatting-cleanup) are plain
+  Markdown, so their content was kept: moved to `docs/workflows/`, given a
+  consistent preamble pointing at `AGENTS.md` + `TEST_AUTOMATION_STANDARDS.md`
+  (works with any agentic coding tool), and normalized from Windows-only
+  `npm.cmd` to cross-platform `npm`. Updated every reference - `README.md`,
+  `AGENTS.md`, `docs/README.md`, and this file - and added the previously
+  orphaned `formatting-cleanup.md` to the README's workflow list. Also swept
+  stale references left over from earlier renames: "Node 22" -> Node 24 in
+  `.github/copilot-instructions.md` and the pethub-local docs, and
+  `tests/dev/` + `tests/qa/` -> `tests/local/` + `tests/external/` across
+  `AGENTS.md`, `TEST_AUTOMATION_STANDARDS.md`, `.github/copilot-instructions.md`,
+  `docs/README.md`, `docs/pethub-local/testing.md`, and `docs/sauce-demo/bugs.md`
+  (the folders were renamed in commit 547d8bf but the docs never caught up).
+  Docs only; `format:check` clean.
+- **2026-09-09** - **Removed `.github/copilot-instructions.md`.** It had been
+  slimmed to a pointer, but a pointer to an auto-loaded file is redundant: AI
+  tools (GitHub Copilot, Claude Code, Cursor, Devin, etc.) read `AGENTS.md`
+  directly, and the file's duplicated quick facts are what let it drift to
+  "Node 22" and `tests/dev`/`tests/qa`. `AGENTS.md` is now the only guidance
+  file. Docs only; `format:check` clean.
 - **2026-06-17** - **Refreshed the README Visual tour + screenshots and fixed
   stale spec paths.** Regenerated all 12 `docs/screenshots/*` images (via
   `npm run screenshots`) so they reflect the recent UI changes (two-tier nav with

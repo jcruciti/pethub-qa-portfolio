@@ -14,7 +14,7 @@
 
 PetHub Local is the **primary** target in the suite because it is deterministic
 and self-owned. Four flavours of test run against it, all under
-[tests/dev/pethub-local](../../tests/dev/pethub-local):
+[tests/local/pethub-local](../../tests/local/pethub-local):
 
 | Type              | Folder  | What it covers                                                                              |
 | ----------------- | ------- | ------------------------------------------------------------------------------------------- |
@@ -28,7 +28,7 @@ and catch the deliberate drift scenarios when they don't.
 
 ### Platform testing surfaces (v2)
 
-[pethub-local-platform.api.spec.ts](../../tests/dev/pethub-local/api/pethub-local-platform.api.spec.ts)
+[pethub-local-platform.api.spec.ts](../../tests/local/pethub-local/api/pethub-local-platform.api.spec.ts)
 exercises a dedicated tier of endpoints (see the
 [app guide §7](app.md#7-rest-api)) so the suite demonstrates more
 **types** of API testing against a deterministic backend:
@@ -50,10 +50,10 @@ The **QA Test Lab** adds two more practice surfaces (see the
 [app guide §6.4](app.md#64-qa-test-lab-lab) and
 [§7 `/api/lab`](app.md#qa-test-lab--http-utilities-apilab)):
 
-- [pethub-local-lab.api.spec.ts](../../tests/dev/pethub-local/api/pethub-local-lab.api.spec.ts)
+- [pethub-local-lab.api.spec.ts](../../tests/local/pethub-local/api/pethub-local-lab.api.spec.ts)
   exercises the stateless httpbin-style HTTP utilities at `/api/lab`.
-- [lab-ui.spec.ts](../../tests/dev/pethub-local/ui/lab-ui.spec.ts) and
-  [lab.a11y.spec.ts](../../tests/dev/pethub-local/a11y/lab.a11y.spec.ts) cover the
+- [lab-ui.spec.ts](../../tests/local/pethub-local/ui/lab-ui.spec.ts) and
+  [lab.a11y.spec.ts](../../tests/local/pethub-local/a11y/lab.a11y.spec.ts) cover the
   `/lab` UI playground across browsers and against the a11y baseline.
 
 | Testing type              | What the spec asserts                                                                                                            |
@@ -84,19 +84,19 @@ The **PetHub Clinic** vertical (see the
 [app guide §6.5](app.md#65-pethub-clinic-clinic) and
 [§7 `/api/clinic`](app.md#pethub-clinic-api-apiclinic)) is covered end-to-end:
 
-- [clinic.api.spec.ts](../../tests/dev/pethub-local/api/clinic.api.spec.ts) -
+- [clinic.api.spec.ts](../../tests/local/pethub-local/api/clinic.api.spec.ts) -
   reference data, the booking happy path with read-back, `422` validation and
   `404` not-found paths via [LocalClinicApiClient](../../src/helpers/api-clients/pethub-local-clinic.client.ts).
-- [clinic-ui.spec.ts](../../tests/dev/pethub-local/ui/clinic-ui.spec.ts) -
+- [clinic-ui.spec.ts](../../tests/local/pethub-local/ui/clinic-ui.spec.ts) -
   the four-step booking wizard happy path, per-step validation, inline email
   validation on the details step, the review summary, back navigation and the
   appointment surfacing on the appointments page.
-- [clinic.a11y.spec.ts](../../tests/dev/pethub-local/a11y/clinic.a11y.spec.ts)
+- [clinic.a11y.spec.ts](../../tests/local/pethub-local/a11y/clinic.a11y.spec.ts)
   - the a11y baseline on the home, booking, appointments and confirmation pages.
 
 ### Cross-app navigation
 
-[cross-navigation.spec.ts](../../tests/dev/pethub-local/ui/cross-navigation.spec.ts)
+[cross-navigation.spec.ts](../../tests/local/pethub-local/ui/cross-navigation.spec.ts)
 asserts the shared app switcher makes every primary surface (Admin, Storefront,
 Clinic, Operations, Test Lab) mutually reachable and never links to itself.
 
@@ -104,7 +104,7 @@ Clinic, Operations, Test Lab) mutually reachable and never links to itself.
 
 ## 2. Prerequisites
 
-- **Node 22** (see [.nvmrc](../../.nvmrc)). Check with `node --version`.
+- **Node 24** (see [.nvmrc](../../.nvmrc)). Check with `node --version`.
 - Dependencies installed: `npm ci` (or `npm install`).
 - Playwright browser binaries installed: `npx playwright install`.
 - A quick environment sanity check: `npm run doctor`
@@ -451,7 +451,7 @@ The shared store is projected asynchronously, so timing discipline matters:
 ## 13. Adding a new test - checklist
 
 1. **Pick the right folder**: `ui/`, `api/`, or `a11y/` under
-   [tests/dev/pethub-local](../../tests/dev/pethub-local).
+   [tests/local/pethub-local](../../tests/local/pethub-local).
 2. **Reuse fixtures**: import `{ test, expect } from '@pethub-local-fixtures'` and
    pull the page objects / `localApiClient` you need.
 3. **No raw selectors in specs**: if a screen lacks a page object or a needed

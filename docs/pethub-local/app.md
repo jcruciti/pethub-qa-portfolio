@@ -38,7 +38,7 @@ public and local targets.
 | --------------- | ---------------------------------------------------------------------------------------- |
 | HTTP server     | [Express 4](https://expressjs.com/)                                                      |
 | Persistence     | [lowdb 7](https://github.com/typicode/lowdb) - JSON-file document store                  |
-| Runtime         | Node 22 (see [.nvmrc](../../.nvmrc)), executed via `tsx`                                 |
+| Runtime         | Node 24 (see [.nvmrc](../../.nvmrc)), executed via `tsx`                                 |
 | Rendering       | Server-side template literals (no client framework)                                      |
 | Styling/scripts | Static assets under [apps/pethub-local/http/static](../../apps/pethub-local/http/static) |
 

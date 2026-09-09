@@ -365,16 +365,22 @@ Configs: `eslint.config.mjs` and `.prettierrc.json`. `npm run doctor` runs a qui
 
 This repository keeps **explicit Playwright code** as the source of truth. AI is intended to assist with planning, generation, analysis, and coverage review.
 
+The playbooks under `docs/workflows/` are **tool-agnostic** - they work with any AI coding tool (GitHub Copilot, Claude Code, Cursor, Devin, etc.) and defer to `AGENTS.md` for the repo's conventions and validation checklist.
+
 ### Available workflows
 
-- `.windsurf/workflows/ai-test-planner.md`
+- [docs/workflows/ai-test-planner.md](docs/workflows/ai-test-planner.md)
   - turn requirements into a concrete test plan
-- `.windsurf/workflows/ai-test-generator.md`
+- [docs/workflows/ai-test-generator.md](docs/workflows/ai-test-generator.md)
   - generate code that matches repo conventions
-- `.windsurf/workflows/ai-test-healer.md`
+- [docs/workflows/ai-test-healer.md](docs/workflows/ai-test-healer.md)
   - analyze failures and propose minimal fixes
-- `.windsurf/workflows/ai-coverage-assistant.md`
+- [docs/workflows/ai-coverage-assistant.md](docs/workflows/ai-coverage-assistant.md)
   - review existing test coverage and identify gaps
+- [docs/workflows/formatting-cleanup.md](docs/workflows/formatting-cleanup.md)
+  - fix widespread Prettier drift in small, reviewable batches
+- [docs/workflows/repo-revival.md](docs/workflows/repo-revival.md)
+  - revive the repo after a long absence (months or years)
 
 ### Recommended usage pattern
 
@@ -391,7 +397,7 @@ Do **not** treat AI-generated steps as the runtime test layer. Keep committed te
 
 ## Maintenance
 
-Returning after a while? Run through this before anything else. For a long absence (a year or more), the `/repo-revival` workflow scripts the same flow with extra checks for accumulated rot.
+Returning after a while? Run through this before anything else. For a long absence (a year or more), the [repo-revival workflow](docs/workflows/repo-revival.md) scripts the same flow with extra checks for accumulated rot.
 
 1. **Check Node** - `node --version` must satisfy `engines` in `package.json` (currently `>=24.0.0`); the pinned major lives in `.nvmrc`. If Node 24 is past EOL, bump `.nvmrc` to the current LTS.
 2. **Reinstall cleanly** - `npm ci` (uses `package-lock.json` exactly).

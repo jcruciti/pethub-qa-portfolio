@@ -6,7 +6,7 @@ description: generate Playwright tests and supporting framework code using repo 
 
 Use this workflow after planning has been approved.
 
-Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
+Read the source-of-truth docs first: [AGENTS.md](../../AGENTS.md) (repo guidance, including the **Validation before declaring done** checklist) and [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) (engineering rules). These playbooks are tool-agnostic: they work with any agentic coding tool (GitHub Copilot, Claude Code, Cursor, Devin, etc.).
 
 ## Goal
 
