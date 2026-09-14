@@ -261,9 +261,13 @@ Default target URLs live in `test-targets.config.ts`. To override them, create a
 ```dotenv
 PUBLIC_BASE_URL=https://petstore.swagger.io
 PUBLIC_API_BASE_URL=https://petstore.swagger.io/v2
+SAUCE_DEMO_BASE_URL=https://www.saucedemo.com
 LOCAL_BASE_URL=http://127.0.0.1:3000
 LOCAL_API_BASE_URL=http://127.0.0.1:3000/api
+PETHUB_DATA_DIR=
 ```
+
+`LOCAL_API_BASE_URL` defaults to `<LOCAL_BASE_URL>/api`, so changing the port needs only `LOCAL_BASE_URL`. `PETHUB_DATA_DIR` relocates the three lowdb stores away from `apps/pethub-local/data/` - see [Running two instances at once](#running-two-instances-at-once).
 
 ## Running tests
 
@@ -274,20 +278,29 @@ LOCAL_API_BASE_URL=http://127.0.0.1:3000/api
 
 The local suite runs `workers: 1` because PetHub Local stores state in a single shared JSON file (lowdb), and concurrent writers would corrupt it. Playwright's `webServer` auto-starts the app (and reuses a running instance), so you never have to start it manually before a test run.
 
-| Command                                        | Runs                                                 |
-| ---------------------------------------------- | ---------------------------------------------------- |
-| `npm test`                                     | Everything: external (parallel) then local (serial)  |
-| `npm run test:external`                        | External targets only (parallel)                     |
-| `npm run test:local`                           | PetHub Local only (serial)                           |
-| `npm run test:ui` / `npm run test:api`         | UI / API across all targets                          |
-| `npm run test:pethub-local`                    | PetHub Local UI + API (add `:ui` / `:api` to narrow) |
-| `npm run test:swagger-petstore`                | Swagger Petstore (add `:ui` / `:api` to narrow)      |
-| `npm run test:sauce-demo`                      | Sauce Demo (add `:ui` to narrow)                     |
-| `npm run test:a11y`                            | Accessibility checks (see below)                     |
-| `npm run test:smoke` / `npm run test:critical` | Tiered subsets (see below)                           |
-| `npm run report` / `npm run report:local`      | Open the external / local HTML report                |
+| Command                                        | Runs                                                  |
+| ---------------------------------------------- | ----------------------------------------------------- |
+| `npm run verify`                               | **The gate**: lint + format + typecheck + local suite |
+| `npm test`                                     | Everything: external (parallel) then local (serial)   |
+| `npm run test:external`                        | External targets only (parallel)                      |
+| `npm run test:local`                           | PetHub Local only (serial)                            |
+| `npm run test:ui` / `npm run test:api`         | UI / API across all targets                           |
+| `npm run test:pethub-local`                    | PetHub Local UI + API (add `:ui` / `:api` to narrow)  |
+| `npm run test:swagger-petstore`                | Swagger Petstore (add `:ui` / `:api` to narrow)       |
+| `npm run test:sauce-demo`                      | Sauce Demo (add `:ui` to narrow)                      |
+| `npm run test:a11y`                            | Accessibility checks (see below)                      |
+| `npm run test:smoke` / `npm run test:critical` | Tiered subsets (see below)                            |
+| `npm run test:failed:local`                    | Re-run only the failures from the last local run      |
+| `npm run lint` / `npm run typecheck`           | ESLint / `tsc --noEmit`                               |
+| `npm run report` / `npm run report:local`      | Open the external / local HTML report                 |
+
+`npm run verify` is the one command to trust before calling work done: it composes the static checks and the deterministic suite (external targets are excluded on purpose, since their flakiness must not gate correctness) and returns a single exit code. Each run also writes machine-readable results to `test-results/results.json` and `test-results-local/results.json`.
 
 Add `--headed` or `--debug` via the `test:headed` / `test:debug` scripts to watch or step through a run.
+
+### Running two instances at once
+
+Two runs collide on port 3000 and on the shared JSON files, so a second one needs its own origin and storage: set `LOCAL_BASE_URL` to move the app's port (the API URL is derived from it) and `PETHUB_DATA_DIR` to put the three databases in a scratch directory. The [testing guide](docs/pethub-local/testing.md#running-two-instances-at-once) has the copy-paste commands for bash and PowerShell.
 
 ### Accessibility (`@a11y`)
 
@@ -357,6 +370,9 @@ npm run lint          # ESLint (flat config; TypeScript + Playwright rules)
 npm run lint:fix      # ESLint with --fix
 npm run format        # Prettier write
 npm run format:check  # Prettier check (CI-safe)
+npm run typecheck     # tsc --noEmit
+npm run docs:check    # every relative Markdown link points at a real file
+npm run verify        # lint + format + typecheck + docs + test:local (one exit code)
 ```
 
 Configs: `eslint.config.mjs` and `.prettierrc.json`. `npm run doctor` runs a quick sanity check (versions + `tsc --noEmit`).
@@ -402,7 +418,7 @@ Returning after a while? Run through this before anything else. For a long absen
 1. **Check Node** - `node --version` must satisfy `engines` in `package.json` (currently `>=24.0.0`); the pinned major lives in `.nvmrc`. If Node 24 is past EOL, bump `.nvmrc` to the current LTS.
 2. **Reinstall cleanly** - `npm ci` (uses `package-lock.json` exactly).
 3. **Run the doctor** - `npm run doctor` (prints versions and type-checks).
-4. **Smoke the local app** - `npm run test:pethub-local` (self-contained, no external sites).
+4. **Run the deterministic gate** - `npm run verify` (lint + format + typecheck + the self-contained local suite; no external sites involved).
 5. **If `npx playwright install` fails to download**, the pinned browser binaries may have rotated off Microsoft's CDN. Run `npm install -D @playwright/test@latest`, then `npx playwright install`. Page objects, fixtures and configs are version-tolerant, so this is usually a one-line fix.
 6. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Those jobs are **informational** in CI and do not block PRs - check the latest scheduled CI run for context.
 

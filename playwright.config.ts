@@ -36,7 +36,12 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
-  reporter: [['html', { open: 'never' }], ['list']],
+  reporter: [
+    ['html', { open: 'never' }],
+    // Machine-readable results (see playwright.local.config.ts).
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['list'],
+  ],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

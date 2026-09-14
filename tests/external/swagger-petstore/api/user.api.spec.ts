@@ -87,7 +87,7 @@ test.describe('Petstore API - User endpoints', () => {
    * They assert the **current buggy behaviour**, so they pass today and will
    * start failing if the API is ever fixed.
    */
-  test.describe('Known defects', () => {
+  test.describe('Known defects', { tag: '@known-defect' }, () => {
     for (const scenario of [
       { label: 'wrong password', url: (u: string) => `user/login?username=${u}&password=WRONG-${Date.now()}` },
       { label: 'non-existent user', url: () => `user/login?username=ghost-user-${Date.now()}&password=anything` },

@@ -41,6 +41,8 @@ apps/pethub-local/        Express + lowdb app (server, routes, data, admin/ops/s
                           lab/ = QA Test Lab: /lab UI playground (forms, dynamic,
                           dialogs, tables, widgets, frames, shadow DOM) + /api/lab
                           httpbin-style stateless HTTP utilities
+                          data-paths.ts = resolution of the three lowdb stores
+                          (PETHUB_DATA_DIR override for isolated runs)
 src/
   core/                   base.page.ts, base-api.client.ts, global-setup.ts
   pages/<system>/         page objects (one per real screen); components/ for shared UI
@@ -62,20 +64,44 @@ Path aliases (see `tsconfig.json`): `@config`, `@core/*`, `@pages/*`,
 
 ## How to run
 
-| Goal                        | Command                                                           |
-| --------------------------- | ----------------------------------------------------------------- |
-| Start local app             | `npm run app:start` (UI on `127.0.0.1:3000`)                      |
-| Stop local app              | `npm run stop` (frees port 3000, cross-platform)                  |
-| Sanity check                | `npm run doctor`                                                  |
-| All tests                   | `npm test` (external then local)                                  |
-| Local suite (deterministic) | `npm run test:local`                                              |
-| External suite              | `npm run test:external`                                           |
-| By target                   | `npm run test:pethub-local` / `:sauce-demo` / `:swagger-petstore` |
-| a11y                        | `npm run test:a11y`                                               |
-| Lint / format               | `npm run lint` · `npm run format:check`                           |
+| Goal                        | Command                                                             |
+| --------------------------- | ------------------------------------------------------------------- |
+| Start local app             | `npm run app:start` (UI on `127.0.0.1:3000`)                        |
+| Stop local app              | `npm run stop` (frees port 3000, cross-platform)                    |
+| Sanity check                | `npm run doctor`                                                    |
+| **Full gate (before done)** | `npm run verify` (lint + format + typecheck + local suite)          |
+| Typecheck only              | `npm run typecheck`                                                 |
+| All tests                   | `npm test` (external then local)                                    |
+| Local suite (deterministic) | `npm run test:local`                                                |
+| External suite              | `npm run test:external`                                             |
+| By target                   | `npm run test:pethub-local` / `:sauce-demo` / `:swagger-petstore`   |
+| a11y                        | `npm run test:a11y`                                                 |
+| Retry last failures         | `npm run test:failed:local` (nothing to run if the last run passed) |
+| Lint / format               | `npm run lint` · `npm run format:check`                             |
+| Doc link check              | `npm run docs:check` (verified targets for every relative link)     |
 
 Node 24 (see `.nvmrc`). The local config runs `workers: 1` because lowdb is a
 single shared JSON file; do not parallelize local tests.
+
+`npm run verify` is the single deterministic gate for the whole repo - one
+command, one exit code. It composes `lint` + `format:check` + `typecheck` +
+`docs:check` + `test:local`, and excludes the external targets on purpose: those
+are informational and their flakiness must not gate correctness. Machine-readable
+results land in `test-results/results.json` and `test-results-local/results.json`
+(both gitignored) so failures can be parsed instead of scraped from the HTML
+report.
+
+### Running in isolation (concurrent runs, worktrees, agents)
+
+The local app defaults to port 3000 and `apps/pethub-local/data/`, so two runs
+sharing those collide. A second instance needs `LOCAL_BASE_URL` (moves the
+origin; `LOCAL_API_BASE_URL` derives from it) and `PETHUB_DATA_DIR` (relocates
+all three lowdb stores away from the repo). Exact recipe:
+[docs/pethub-local/testing.md](docs/pethub-local/testing.md#running-two-instances-at-once).
+
+Isolation makes separate **runs** safe. It does not make parallel **specs** safe
+
+- keep the local suite serial (`workers: 1`).
 
 ## Conventions agents must follow
 
@@ -93,14 +119,26 @@ single shared JSON file; do not parallelize local tests.
 - **Async hygiene**: use `waitForURL`, `Promise.all/race`, and `expect.poll` for
   eventual consistency - avoid arbitrary waits.
 - **Known-defect tests** assert _current buggy behavior_ on purpose; keep them
-  clearly labeled and cross-referenced to `docs/<system>/bugs.md`.
+  clearly labeled, tagged `@known-defect`, and cross-referenced to
+  `docs/<system>/bugs.md`. Never "fix" one to make it pass - it is written to
+  fail the day the defect is genuinely fixed. List them with
+  `npx playwright test --grep @known-defect --list` (add
+  `--config playwright.local.config.ts` for the in-repo app).
 
 ## Validation before declaring done
 
-1. `npm run lint` and `npm run format:check` pass.
-2. `npx tsc --noEmit` clean (covered by `npm run doctor`).
-3. Run the focused suite for the affected target (e.g. `npm run test:local`).
-4. **Update the docs in the same change - do not wait to be asked.** Whenever
+1. `npm run verify` passes. It is the composed gate: `lint` + `format:check` +
+   `typecheck` + `docs:check` + `test:local`. Run the pieces individually only
+   while iterating.
+2. If you changed anything under `src/`, `tests/`, or `apps/`, the local suite
+   must actually run - a green lint is not evidence.
+3. Prefer `npm run test:failed:local` to re-run just the previous failures when
+   iterating, then finish with a full `npm run verify`.
+4. A `globalSetup` failure is fatal and means the database was not reset. Fix the
+   cause (stale instance holding port 3000, or a shared `PETHUB_DATA_DIR`) - do
+   not work around it, because every later assertion would run against unknown
+   state.
+5. **Update the docs in the same change - do not wait to be asked.** Whenever
    behavior, structure, commands, surfaces, or test coverage change, update every
    affected Markdown file as part of the work:
    - [PROGRESS.md](PROGRESS.md) - status, backlog, tech-debt, and the decision log.

@@ -1,7 +1,6 @@
-import { existsSync, mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import { resolveDataFile } from './data-paths';
 import {
   buildSeedCustomers,
   buildSeedEmployees,
@@ -137,13 +136,9 @@ type DatabaseSchema = {
   sessions: SessionRecord[];
 };
 
-// Resolve the data file relative to this module so the app runs from any
-// working directory, not only the repository root.
-const databaseFile = join(__dirname, 'data', 'pethub-local-db.json');
-const directory = dirname(databaseFile);
-if (!existsSync(directory)) {
-  mkdirSync(directory, { recursive: true });
-}
+// Path is resolved relative to this module (or `PETHUB_DATA_DIR`) so the app
+// runs from any working directory and can be pointed at isolated storage.
+const databaseFile = resolveDataFile('pethub-local-db.json');
 
 const adapter = new JSONFile<DatabaseSchema>(databaseFile);
 const database = new Low<DatabaseSchema>(adapter, {

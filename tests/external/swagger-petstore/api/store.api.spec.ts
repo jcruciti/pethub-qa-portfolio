@@ -60,7 +60,7 @@ test.describe('Petstore API - Store endpoints', () => {
    * They assert the **current buggy behaviour**, so they pass today and will
    * start failing if the API is ever fixed.
    */
-  test.describe('Known defects', () => {
+  test.describe('Known defects', { tag: '@known-defect' }, () => {
     test('DATA-1: GET /store/inventory contains keys outside the documented enum', async ({ request }) => {
       const response = await request.get('store/inventory');
       expect(response.status()).toBe(200);

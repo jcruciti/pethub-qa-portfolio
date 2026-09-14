@@ -9,7 +9,9 @@ const publicUiBaseUrl = process.env.PUBLIC_BASE_URL ?? 'https://petstore.swagger
 const publicApiBaseUrl = process.env.PUBLIC_API_BASE_URL ?? 'https://petstore.swagger.io/v2';
 const sauceDemoUiBaseUrl = process.env.SAUCE_DEMO_BASE_URL ?? 'https://www.saucedemo.com';
 const localUiBaseUrl = process.env.LOCAL_BASE_URL ?? 'http://127.0.0.1:3000';
-const localApiBaseUrl = process.env.LOCAL_API_BASE_URL ?? 'http://127.0.0.1:3000/api';
+// Derived from the UI origin so overriding the port needs just one variable
+// (`LOCAL_BASE_URL`) - see the isolation note in AGENTS.md.
+const localApiBaseUrl = process.env.LOCAL_API_BASE_URL ?? `${localUiBaseUrl}/api`;
 
 export const testTargets = {
   swaggerPetstore: {

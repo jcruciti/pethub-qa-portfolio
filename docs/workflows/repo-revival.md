@@ -68,9 +68,10 @@ Read the source-of-truth docs first: [AGENTS.md](../../AGENTS.md) (repo guidance
 - validation pyramid:
   - `npm run lint`
   - `npm run format:check`
-  - `npx tsc --noEmit`
+  - `npm run typecheck`
   - `npm run test:pethub-local` (canary)
   - `npm run test:external` (informational)
+  - ...or `npm run verify` to run everything deterministic at once
 - screenshot refresh:
   - `npm run app:start` in one terminal, then `npm run screenshots` in another
 

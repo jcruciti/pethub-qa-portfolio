@@ -35,6 +35,12 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      # Playwright transpiles without typechecking, so a type error would
+      # otherwise pass CI green. Keep this in the required lint job.
+      - run: npm run typecheck
+      # Relative links between the docs and the source tree rot silently on
+      # renames; this fails the required job instead.
+      - run: npm run docs:check
 
   test-local:
     name: Local app tests — PetHub Local (required)

@@ -23,6 +23,7 @@
     "test:a11y": "playwright test --config playwright.local.config.ts --project=pethub-local-a11y",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
+    "test:failed:local": "playwright test --config playwright.local.config.ts --last-failed --pass-with-no-tests",
     "report": "playwright show-report",
     "report:local": "playwright show-report playwright-report-local",
     "docs:pdf": "tsx scripts/md-to-pdf.ts docs/sauce-demo/bugs.md",
@@ -33,7 +34,10 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "doctor": "node --version && npm --version && npx playwright --version && npx tsc --noEmit && echo Doctor: OK"
+    "typecheck": "tsc --noEmit",
+    "docs:check": "tsx scripts/check-doc-links.ts",
+    "doctor": "node --version && npm --version && npx playwright --version && npm run typecheck && echo Doctor: OK",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run docs:check && npm run test:local"
   },
   "engines": {
     "node": ">=24.0.0"

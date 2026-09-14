@@ -28,7 +28,13 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
-  reporter: [['html', { open: 'never', outputFolder: 'playwright-report-local' }], ['list']],
+  reporter: [
+    ['html', { open: 'never', outputFolder: 'playwright-report-local' }],
+    // Machine-readable results so agents and CI can parse failures
+    // deterministically instead of scraping the HTML report or list output.
+    ['json', { outputFile: 'test-results-local/results.json' }],
+    ['list'],
+  ],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

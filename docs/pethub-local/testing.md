@@ -119,11 +119,13 @@ Clinic, Operations, Test Lab) mutually reachable and never links to itself.
 ## 3. Running the tests
 
 ```powershell
+npm run verify                 # the full gate: lint + format + typecheck + docs + this suite
 npm run test:local             # full PetHub Local suite (serial)
 npm run test:pethub-local      # alias of the above
 npm run test:pethub-local:ui   # UI specs only (chromium + firefox + webkit)
 npm run test:pethub-local:api  # API + cross-database specs only
 npm run test:a11y              # accessibility project only
+npm run test:failed:local      # re-run only the failures from the last local run
 ```
 
 Tiered subsets (these span all three targets, local included):
@@ -133,11 +135,21 @@ npm run test:smoke             # minimum "is it alive" signal
 npm run test:critical          # business-critical happy paths
 ```
 
+The storefront persona specs assert _intentional_ defects, so they carry the
+`@known-defect` tag instead of being fixed when they fail:
+
+```powershell
+npx playwright test --config playwright.local.config.ts --grep @known-defect --list
+```
+
 Reports:
 
 ```powershell
 npm run report:local           # opens the PetHub Local HTML report
 ```
+
+Every run also writes machine-readable results to `test-results-local/results.json`
+(gitignored), which is easier to parse than the list or HTML output.
 
 > `npm test` runs the **external** suite first (Swagger Petstore + Sauce Demo,
 > fully parallel) and then the **local** suite (serial). The two use separate
@@ -152,7 +164,8 @@ writing concurrently can corrupt it. So
 [playwright.local.config.ts](../../playwright.local.config.ts) sets:
 
 - `workers: 1` and `fullyParallel: false` - one Express process, one DB file.
-- `webServer` - auto-starts/reuses the app on `127.0.0.1:3000`.
+- `webServer` - auto-starts/reuses the app on `127.0.0.1:3000` (the port is
+  derived from `LOCAL_BASE_URL`, so it is overridable).
 - `globalSetup` - resets the database to seed **before** the suite runs.
 - `testIdAttribute: 'data-test'` - so `getByTestId(...)` targets app-owned ids.
 
@@ -165,6 +178,31 @@ their cases run in a defined order against the shared state.
 `POST /api/admin/reset`, which truncates and reseeds all three stores and
 re-projects the derived ones. That is what makes every run start from the same
 canonical seed data described in the app guide.
+
+A failed reset is **fatal** - the run aborts instead of continuing. Leaked state
+otherwise surfaces much later as locator or timing failures that look like test
+bugs, so the reset is the one setup step worth failing loudly on.
+
+### Running two instances at once
+
+The port and the data directory are both overridable, which is what lets a second
+run (another worktree, or a manual `npm run app:start`) coexist with the suite:
+
+```powershell
+$env:LOCAL_BASE_URL="http://127.0.0.1:3100"; $env:PETHUB_DATA_DIR="$env:TEMP\pethub-run-a"; npm run test:local
+```
+
+```bash
+LOCAL_BASE_URL=http://127.0.0.1:3100 PETHUB_DATA_DIR=/tmp/pethub-run-a npm run test:local
+```
+
+- `LOCAL_BASE_URL` moves the origin; `LOCAL_API_BASE_URL` defaults to
+  `<LOCAL_BASE_URL>/api`.
+- `PETHUB_DATA_DIR` relocates all three stores ([data-paths.ts](../../apps/pethub-local/data-paths.ts))
+  and creates the directory on demand.
+
+Isolation makes separate **runs** safe. It does not make parallel **specs**
+safe - the local config must stay `workers: 1`.
 
 ---
 
@@ -462,34 +500,43 @@ The shared store is projected asynchronously, so timing discipline matters:
 7. **Tag** it if it belongs to a tier (`@smoke` / `@critical` / `@a11y`).
 8. **Run the focused suite** and the gates before calling it done (next section).
 
----
+---docs:check + test:local
 
-## 14. Validation before "done"
+````
 
-From [AGENTS.md](../../AGENTS.md):
+`npm run verify` is the composed gate - one command, one exit code. Run the
+pieces individually only while iterating:
 
 ```powershell
-npm run lint                   # ESLint (TS + Playwright rules)
-npm run format:check           # Prettier
-npx tsc --noEmit               # type check (also via npm run doctor)
-npm run test:local             # run the affected local suite
-```
+npm run lint
+npm run format:check
+npm run typecheck              # tsc --noEmit
+npm run docs:check             # relative Markdown link targets exis
+`npm run verify` is the composed gate - one command, one exit code. Run the
+pieces individually only while iterating:
+
+```powershell
+npm run lint
+npm run format:check
+npm run typecheck              # tsc --noEmit
+npm run test:local
+````
 
 Then update [PROGRESS.md](../../PROGRESS.md) if status, backlog, or tech-debt
-changed.
+changed, and the affected docs (see the docs rule in AGENTS.md).
 
 ---
 
 ## 15. Troubleshooting
 
-| Symptom                                     | Likely cause / fix                                                                  |
-| ------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Local tests interfere with each other       | Something is running them in parallel - the local config must stay `workers: 1`.    |
-| Stale data across runs                      | `globalSetup` reset didn't run; trigger `POST /api/admin/reset` or rerun the suite. |
-| `findByStatus`/`findByTags` returns nothing | Status/tag mismatch - check the seed data in the app guide.                         |
-| Cross-store assertion flakes                | Replace a direct assertion with `expect.poll(...)`; projection is async.            |
-| `npx playwright install` fails to download  | Pinned browsers rotated out of CDN - bump `@playwright/test`, reinstall.            |
-| Storefront login unexpectedly fails         | Using `locked_out_user` (intentionally rejected) or wrong password (`pethub123`).   |
+| Symptom                                     | Likely cause / fix                                                                                                                                        |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Local tests interfere with each other       | Something is running them in parallel - the local config must stay `workers: 1`.                                                                          |
+| Stale data across runs                      | The reset is fatal, so a stale run aborts with a `globalSetup` error - check the app is reachable and no other instance holds the same `PETHUB_DATA_DIR`. |
+| `findByStatus`/`findByTags` returns nothing | Status/tag mismatch - check the seed data in the app guide.                                                                                               |
+| Cross-store assertion flakes                | Replace a direct assertion with `expect.poll(...)`; projection is async.                                                                                  |
+| `npx playwright install` fails to download  | Pinned browsers rotated out of CDN - bump `@playwright/test`, reinstall.                                                                                  |
+| Storefront login unexpectedly fails         | Using `locked_out_user` (intentionally rejected) or wrong password (`pethub123`).                                                                         |
 
 ---
 

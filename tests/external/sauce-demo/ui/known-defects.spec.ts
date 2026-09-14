@@ -11,7 +11,7 @@ import { sauceDemoPassword, sauceDemoProductIds, sauceDemoProducts, sauceDemoUse
  * and must perform their own login per test, so they opt out of the
  * project-level standard_user `storageState`.
  */
-test.describe('Sauce Demo - Known defects', () => {
+test.describe('Sauce Demo - Known defects', { tag: '@known-defect' }, () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   // PU-2 + EU-1: inventory sort dropdown does not reorder items

@@ -54,7 +54,10 @@ npm run app:start          # tsx apps/pethub-local/server.ts
 ```
 
 The app listens on **`http://127.0.0.1:3000`** by default (override with the
-`APP_PORT` environment variable).
+`APP_PORT` environment variable). The three lowdb stores are read from
+`apps/pethub-local/data/`; set **`PETHUB_DATA_DIR`** to resolve them from another
+directory instead, so a second instance can run without touching the first (see
+the [testing guide](testing.md#running-two-instances-at-once)).
 
 | Surface           | Path      | Purpose                                               |
 | ----------------- | --------- | ----------------------------------------------------- |
@@ -67,7 +70,8 @@ The app listens on **`http://127.0.0.1:3000`** by default (override with the
 | Static assets     | `/static` | Theme CSS/JS                                          |
 
 Health check: `GET /api/health` → `{ "status": "ok", "service": "pethub-local" }`.
-Reset to seed: `POST /api/admin/reset` (used by Playwright `globalSetup`).
+Reset to seed: `POST /api/admin/reset` (used by Playwright `globalSetup`, which
+treats a failed reset as fatal rather than continuing against stale data).
 
 Stop it with `Ctrl + C`, or stop the background terminal if it was launched by
 Playwright's `webServer`.

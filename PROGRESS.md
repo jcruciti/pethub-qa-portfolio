@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-09-09_
+_Last updated: 2026-09-14_
 
 ---
 
@@ -18,11 +18,12 @@ _Last updated: 2026-09-09_
   - `pethub-local` - in-repo **Express + lowdb** app (deterministic, the
     primary target). UI + API + a11y.
 - **~585 tests across 31 spec files** (367 dev across 18 files + 218 qa across 13).
-- **CI** (`.github/workflows/playwright.yml`): `lint` → `test-local`
-  (required) + `test-external` (informational, `continue-on-error`), plus a
-  weekly cron to detect external-target drift.
+- **CI** (`.github/workflows/playwright.yml`): `lint` + `format:check` +
+  `typecheck` → `test-local` (required) + `test-external` (informational,
+  `continue-on-error`), plus a weekly cron to detect external-target drift.
 - **Tooling**: ESLint 10 (flat config) + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 24),
-  `npm run doctor`, screenshot/PDF helper scripts.
+  `npm run doctor`, `npm run verify` (the composed gate: lint + format + typecheck +
+  docs + local suite), screenshot/PDF helper scripts.
 - **AI assist**: `docs/workflows/*` (plan / generate / heal / coverage /
   repo-revival / formatting-cleanup), plus `AGENTS.md` as the single guidance file.
 
@@ -57,6 +58,31 @@ _Last updated: 2026-09-09_
 - [ ] **Productionize PetHub Local** if we want to deploy it for real - see the
       staged plan in [§7](#7-deploying-pethub-local-as-a-real-app-design-note---continue-2026-06-17).
 
+### Parallelism / SQLite (scoped 2026-09-14, not started)
+
+Ranked by value per unit of effort. See §6 for why these are separate concerns.
+
+- [ ] **Shard the browser matrix** (best ratio, ~30 min). Keep chromium on the
+      required gate and run Firefox/WebKit in a second job or on the nightly
+      cron. Cuts wall clock by roughly two thirds with no storage or test changes.
+- [ ] **Per-worker app instances** (multi-day) - the only real route to
+      `workers > 1`. Layers 1-2 are already free via `PETHUB_DATA_DIR` (own port,
+      own data dir, own process). Remaining blockers are assertion-level:
+      `pethub-local.api.spec.ts:317` calls `POST admin/reset` mid-run; 3 API specs
+      pin `mode: 'serial'`; several specs assert on global collections (audit log,
+      read models, downstream replicas); UI/a11y specs hardcode seed ids (e.g.
+      `1010`). CI is 2 vCPU, so the win there is ~1.5x, not 4x.
+- [ ] **Replace `JsonSqlDatabase` with `node:sqlite`** (Scope A, ~half a day).
+      Deletes the 190-line regex SQL parser ([json-sql-database.ts](src/helpers/sql/json-sql-database.ts))
+      and unlocks real query shapes (multi-join, GROUP BY, subqueries). Node 24
+      ships `node:sqlite` built in - verified working, no dependency, no service,
+      and `@types/node` already provides `sqlite.d.ts`. Consumers: one spec
+      (`pethub-local-database.api.spec.ts:33`). **No parallelism benefit** - it is
+      a maintainability change, and it does not remove that spec's per-query file
+      read (`json-sql-database.ts:197`).
+- [ ] **Extract seed ids into constants** (Low tech-debt, see §5). Would also
+      remove a shared-magic-value coupling that blocks parallel specs.
+
 ## 5. Known issues / tech-debt
 
 | Item                      | Where                                                                        |     Severity     | Notes                                                                                                                                                     |
@@ -69,6 +95,40 @@ _Last updated: 2026-09-09_
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-09-14** - **Added a doc-link check to the gate and tagged the
+  intentional-defect suites `@known-defect`.** `scripts/check-doc-links.ts` (with
+  `npm run docs:check`, now part of both `npm run verify` and the required CI
+  `lint` job) fails when a relative Markdown link points at a target that no
+  longer exists - the recurring failure mode behind the `tests/dev/` and
+  `.windsurf/` drift. It ignores external URLs and in-page anchors so it cannot
+  produce false positives, and it was validated in both directions: the current
+  docs pass (15 files), and a deliberately broken link fails with `file:line`.
+  Separately, the five suites that assert _on purpose_ broken behaviour (Sauce
+  Demo known-defects, the three Swagger Petstore known-defect blocks, and the
+  PetHub storefront personas) now carry a describe-level tag, so they can be
+  listed with `npx playwright test --grep @known-defect --list` (99 external /
+  12 local tests) instead of being "fixed" by mistake. Docs updated: `AGENTS.md`
+  (run table, validation checklist, known-defect convention), `README.md`, and
+  `docs/pethub-local/testing.md`. Deferred parallelism/SQLite work is now scoped
+  in §4.
+- **2026-09-14** - **Made the repo harder to run incorrectly: one gate, a
+  mandatory reset, and per-run isolation.** (1) `npm run verify` composes
+  `lint` + `format:check` + `typecheck` + `test:local` into one exit code
+  (external targets stay excluded - their flakiness must not gate correctness);
+  the required CI `lint` job now runs `typecheck` too, since Playwright
+  transpiles without typechecking and a type error could merge green. (2)
+  `src/core/global-setup.ts` throws instead of `console.warn`-and-continuing
+  when the seed reset fails - leaked state otherwise surfaces later as bogus
+  locator/timing failures. (3) The three lowdb stores resolve through the new
+  `apps/pethub-local/data-paths.ts`, honouring `PETHUB_DATA_DIR`, and
+  `LOCAL_API_BASE_URL` derives from `LOCAL_BASE_URL`, so a second concurrent
+  instance needs two env vars. Both configs also emit
+  `test-results{,-local}/results.json`, and `npm run test:failed:local` re-runs
+  just the previous failures (`--pass-with-no-tests`, because otherwise a green
+  prior run exits 1 with "No tests found" - a false failure signal). Verified:
+  `npm run verify` green with **383 local tests passed**, and isolation
+  confirmed by running the app on port 3101 with `PETHUB_DATA_DIR` pointing at a
+  scratch directory.
 - **2026-09-09** - **Retired the `.windsurf` namespace; made the AI workflow
   playbooks tool-agnostic.** Windsurf was renamed to Devin and the repo is
   developed in VS Code + GitHub Copilot, so the `.windsurf/workflows/*` path no

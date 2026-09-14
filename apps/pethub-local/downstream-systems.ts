@@ -1,7 +1,6 @@
-import { existsSync, mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import { resolveDataFile } from './data-paths';
 import type { CustomerRecord, EmployeeRecord, LocalAppEvent, OrderRecord, PetRecord, UserRecord } from './database';
 
 export type InventoryReplicaRecord = {
@@ -68,13 +67,9 @@ export type DownstreamSystemSnapshot = {
   analyticsEvents: AnalyticsEventRecord[];
 };
 
-// Resolve the data file relative to this module so the app runs from any
-// working directory, not only the repository root.
-const downstreamFile = join(__dirname, 'data', 'downstream-systems-db.json');
-const directory = dirname(downstreamFile);
-if (!existsSync(directory)) {
-  mkdirSync(directory, { recursive: true });
-}
+// Path is resolved relative to this module (or `PETHUB_DATA_DIR`) so the app
+// runs from any working directory and can be pointed at isolated storage.
+const downstreamFile = resolveDataFile('downstream-systems-db.json');
 
 const adapter = new JSONFile<DownstreamSystemSnapshot>(downstreamFile);
 const downstreamDb = new Low<DownstreamSystemSnapshot>(adapter, {

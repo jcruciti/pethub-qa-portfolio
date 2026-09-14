@@ -141,7 +141,7 @@ test.describe('Petstore API - Pet endpoints', () => {
    * start failing if the API is ever fixed — at which point the test (and the
    * catalogue) need updating.
    */
-  test.describe('Known defects', () => {
+  test.describe('Known defects', { tag: '@known-defect' }, () => {
     test('AUTH-1: DELETE /pet/{id} succeeds without the documented api_key header', async ({ apiClient, request }) => {
       const pet = createPetDto();
       await apiClient.createPet(pet);

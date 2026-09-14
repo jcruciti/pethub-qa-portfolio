@@ -14,7 +14,7 @@ import { pethubLocalPassword, pethubLocalUsers } from '@helpers/test-data';
  * `standard_user` stays the happy path (covered by the other storefront specs);
  * nothing here touches it.
  */
-test.describe('PetHub Storefront persona defects', () => {
+test.describe('PetHub Storefront persona defects', { tag: '@known-defect' }, () => {
   const password = pethubLocalPassword;
 
   test.describe('problem_user', () => {
