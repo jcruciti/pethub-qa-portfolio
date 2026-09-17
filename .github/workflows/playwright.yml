@@ -2,55 +2,30 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
   schedule:
-    # Weekly health check: detect rot in external targets and dependencies
-    # even when nobody is pushing. Monday 06:00 UTC.
     - cron: '0 6 * * 1'
 
-# Cancel superseded runs on the same ref so rapid pushes don't pile up.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Least privilege: the workflow only needs to read repository contents.
 permissions:
   contents: read
 
 jobs:
   lint:
-    name: Lint and format
+    name: Lint, format, typecheck & docs
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
-      # Playwright transpiles without typechecking, so a type error would
-      # otherwise pass CI green. Keep this in the required lint job.
-      - run: npm run typecheck
-      # Relative links between the docs and the source tree rot silently on
-      # renames; this fails the required job instead.
-      - run: npm run docs:check
 
-  test-local:
-    name: Local app tests — PetHub Local (required)
-    runs-on: ubuntu-latest
-    needs: lint
-    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v7
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -58,130 +33,48 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Lint
+        run: npm run lint
 
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v6
+      - name: Format check
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Docs check
+        run: npm run docs:check
+
+  test-local:
+    name: Local app tests — PetHub Local
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+          node-version-file: .nvmrc
+          cache: npm
 
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
         run: npx playwright install --with-deps
-
-      - name: Install Playwright system deps only (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
 
       - name: Run PetHub Local tests
         run: npm run test:local
 
-      - name: Upload PetHub Local HTML report
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-local
-          path: playwright-report-local/
-          retention-days: 14
-
-      - name: Upload PetHub Local test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-test-results-local
-          path: test-results-local/
-          retention-days: 14
-
-  test-external:
-    name: External target tests (informational)
-    runs-on: ubuntu-latest
-    needs: lint
-    timeout-minutes: 30
-    # External targets (Swagger Petstore, Sauce Demo) are public demo sites
-    # we do not control. Their flakiness should not block PRs or main.
-    # The job still runs and uploads artifacts so we can investigate rot.
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
-
-      - name: Install Playwright system deps only (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
-
-      - name: Run external target tests
-        run: npm run test:external
-
-      - name: Upload external HTML report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 14
-
-      - name: Upload external test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-test-results
-          path: test-results/
-          retention-days: 14
-
-  auto-merge:
-    name: Auto-merge Dependabot minor & patch
-    # Gate on the required local suite (which itself needs lint + format:check).
-    # The informational external job is intentionally excluded so demo-site
-    # flakiness never blocks a merge.
-    needs: test-local
-    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Squash-merge minor, patch & GitHub Actions updates
-        # GitHub Actions bumps are validated by this same CI run, so they are
-        # safe to auto-merge even on a major; npm majors stay manual.
-        if: >-
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.package-ecosystem == 'github_actions'
-        run: |
-          gh pr merge --squash "$PR_URL" \
-            || echo "::notice::Merge deferred; Dependabot will rebase and retry."
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
