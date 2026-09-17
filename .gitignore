@@ -1,26 +1,64 @@
+# ============================================================
+# Dependencies
+# ============================================================
 node_modules/
+
+# ============================================================
+# Environment / secrets
+# ============================================================
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# Test / Playwright generated artifacts
+# ============================================================
 playwright-report/
 playwright-report-local/
 test-results/
 test-results-local/
-.env
-*.log
-tmp-*.js
-.DS_Store
-Thumbs.db
 blob-report/
-dist/
-coverage/
+playwright/.auth/
 
-# Build & lint caches
+# ============================================================
+# Coverage / build artifacts
+# ============================================================
+coverage/
+dist/
+
+# ============================================================
+# Logs / temporary files / caches
+# ============================================================
+*.log
 *.tsbuildinfo
 .eslintcache
+tmp-*.js
 
-# IDE / editor local files
+# ============================================================
+# IDE / editor / local tool files
+# ============================================================
+.vscode/
 .idea/
 .history/
+.qodo/
 *.swp
 *.swo
 
-# Playwright auth state files (regenerated per run via setup projects)
-playwright/.auth/
+# ============================================================
+# macOS metadata
+# ============================================================
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# ============================================================
+# Windows metadata
+# ============================================================
+Thumbs.db
+
+# ============================================================
+# Generated documentation artifacts
+# ============================================================
+# Add specific generated documentation directories here only
+# if they are confirmed to be disposable.
