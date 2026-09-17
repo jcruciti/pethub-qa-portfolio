@@ -58,6 +58,11 @@ tmp-*.js
 Thumbs.db
 
 # ============================================================
+# Numbers Worksheet
+# ============================================================
+QA_Test_Plan.numbers
+
+# ============================================================
 # Generated documentation artifacts
 # ============================================================
 # Add specific generated documentation directories here only
