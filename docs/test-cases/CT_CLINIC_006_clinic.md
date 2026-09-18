@@ -88,13 +88,14 @@ Confirm that invalid, missing, or unavailable selections are rejected before a c
 
 #### Test Steps
 
-|  ID | Action                                                           | Expected Result                                                         |
-| --: | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
-|   1 | Attempt to continue without selecting a service or veterinarian. | The form blocks progression and shows a validation message.             |
-|   2 | Select an unavailable slot.                                      | The system prevents selection or clearly marks the slot as unavailable. |
-|   3 | Enter a malformed email address.                                 | A validation error is displayed inline and progression is blocked.      |
-|   4 | Correct the invalid fields and continue.                         | The booking advances once all required rules are satisfied.             |
-|   5 | Submit the corrected booking.                                    | The appointment is created successfully after validation passes.        |
+|  ID | Action                                                           | Expected Result                                                                                 |
+| --: | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+|   1 | Attempt to continue without selecting a service or veterinarian. | The form blocks progression and shows a validation message.                                     |
+|   2 | Select an unavailable slot.                                      | The system prevents selection or clearly marks the slot as unavailable.                         |
+|   3 | Enter a malformed email address.                                 | A validation error is displayed inline and progression is blocked.                              |
+|   4 | Correct the invalid fields and continue.                         | The booking advances once all required rules are satisfied.                                     |
+|   5 | Submit the corrected booking.                                    | The appointment is created successfully after validation passes.                                |
+|   6 | Attempt to continue without selecting a date.                    | The booking flow blocks progression and a toaster message displays "Choose a date to continue". |
 
 #### Postconditions
 
