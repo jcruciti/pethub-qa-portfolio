@@ -12,9 +12,10 @@
 
 **Preconditions:**
 
-- PetHub Local is running.
+- PetHub Local is running on `http://127.0.0.1:3000`
+- The LowDB operational database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
+- The app has been restarted so the in-memory clinic appointment store is initialized from the seeded baseline.
 - The clinic booking flow is accessible.
-- The database is reset to the baseline seed state.
 
 **Test Data:**
 

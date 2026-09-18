@@ -12,8 +12,9 @@
 
 **Preconditions:**
 
-- PetHub Local is running on http://127.0.0.1:3000.
-- The database has been reset to the seeded baseline.
+- PetHub Clinic is running on `http://127.0.0.1:3000`
+- Database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
+- See [Test Environment — Database Reset Procedure](test-environment.md#database-reset-procedure)
 - No storefront session is active.
 
 **Test Data:**

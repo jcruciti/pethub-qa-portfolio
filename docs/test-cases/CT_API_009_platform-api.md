@@ -12,7 +12,8 @@
 
 **Preconditions:**
 
-- The app is running.
+- PetHub Local is running on `http://127.0.0.1:3000`
+- Database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
 - The platform API endpoints are available under /api/v2 and /api/auth.
 
 **Test Data:**

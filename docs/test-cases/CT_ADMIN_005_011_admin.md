@@ -18,8 +18,9 @@
 
 **Preconditions:**
 
+- PetHub Local is running on `http://127.0.0.1:3000`
+- Database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
 - The admin dashboard is open.
-- The database is reset to the seed state.
 - A valid pet ID already exists in the operational store.
 
 **Test Data:**
@@ -82,8 +83,9 @@ Verify that duplicate pet creation is prevented and that the original record rem
 
 **Preconditions:**
 
+- PetHub Local is running on `http://127.0.0.1:3000`
+- Database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
 - The admin dashboard is open.
-- The database is reset to the seed state.
 - The test pet ID does not already exist in the operational store.
 - The test category does not exist in the seeded category data.
 

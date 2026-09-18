@@ -12,7 +12,8 @@
 
 **Preconditions:**
 
-- The app is running and the database is reset to the seeded baseline.
+- PetHub Local is running on `http://127.0.0.1:3000`
+- Database has been reset to the canonical seeded baseline using `POST /api/admin/reset`
 - At least one order or pet exists in the operational store.
 
 **Test Data:**
