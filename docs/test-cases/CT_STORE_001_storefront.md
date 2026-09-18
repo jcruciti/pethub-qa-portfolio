@@ -189,48 +189,56 @@ Validate the documented intentional defect behavior for the problem_user persona
 
 **Preconditions:**
 
-- The user is logged in as performance_user.
+- The user is logged in as `performance_user`.
 - The app is running with the documented delayed-response behavior enabled.
 
 **Test Data:**
 
-- Username: performance_user
-- Password: pethub123
+- Username: `performance_user`
+- Password: `pethub123`
 - One selectable pet from the inventory list
+- Inventory sorting options:
+  - A–Z
+  - Z–A
+  - Price Low to High
+  - Price High to Low
 
 #### Objective
 
-Verify that the performance_user persona’s injected latency remains deterministic and that the storefront remains functionally usable without data loss or session failure.
+Verify that the `performance_user` persona’s injected latency remains deterministic and that the storefront remains functionally usable without data loss or session failure.
 
 #### Test Steps
 
-|  ID | Action                      | Expected Result                                                                       |
-| --: | --------------------------- | ------------------------------------------------------------------------------------- |
-|   1 | Log in as performance_user. | Authentication succeeds.                                                              |
-|   2 | Open the inventory page.    | The page eventually renders the inventory grid after the documented delay.            |
-|   3 | Open a pet detail page.     | The detail page loads successfully and displays the expected product information.     |
-|   4 | Add an item to the cart.    | The cart updates only after the delayed response completes.                           |
-|   5 | Continue through checkout.  | The user can complete the documented flow without losing cart state or session state. |
+| ID  | Action                                                                                                                                                                                                                                 | Expected Result                                                                                                                                                                     |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Log in as `performance_user`.                                                                                                                                                                                                          | Authentication succeeds.                                                                                                                                                            |
+| 2   | Open the inventory page.                                                                                                                                                                                                               | The page eventually renders the inventory grid after the documented delay.                                                                                                          |
+| 3   | Measure the inventory sorting response time for each available sorting option. Repeat each measurement three times and record the results. Repeat the same measurements with `standard_user` under the same conditions for comparison. | The inventory is reordered correctly after each sorting selection. The response times are recorded and the delayed response behavior remains consistent across repeated executions. |
+| 4   | Open a pet detail page.                                                                                                                                                                                                                | The detail page loads successfully and displays the expected product information.                                                                                                   |
+| 5   | Add an item to the cart.                                                                                                                                                                                                               | The cart updates only after the delayed response completes.                                                                                                                         |
+| 6   | Continue through checkout.                                                                                                                                                                                                             | The user can complete the documented flow without losing cart state or session state.                                                                                               |
 
 #### Postconditions
 
 - The user remains authenticated.
 - The delayed storefront response does not break the cart or checkout workflow.
+- Inventory sorting response times have been recorded for both `performance_user` and `standard_user`.
 
 ### Traceability
 
-- Feature: performance_user persona and delayed response behavior
-- UI Route: /shop/inventory, /shop/item/:id, /shop/cart, /shop/checkout
+- Feature: `performance_user` persona and delayed response behavior
+- UI Route: `/shop/inventory`, `/shop/item/:id`, `/shop/cart`, `/shop/checkout`
 - API Endpoint(s): N/A for the documented delayed-response UI behavior
 - Business Rule: The app intentionally delays responses for this persona while preserving the user flow
-- Data Source: documented performance_user behavior in the PetHub Local app guide
+- Data Source: documented `performance_user` behavior in the PetHub Local app guide
 - Related Test Case(s): CT001, CT002
 
 ### Validation Layers
 
-- UI Assertions: page load, item detail load, cart update, checkout continuity
+- UI Assertions: page load, item detail load, cart update, checkout continuity, inventory sorting
 - Data Assertions: cart state is retained throughout the delayed-response flow
 - Integration Assertions: session remains valid and no data loss occurs across the flow
+- Performance Observations: inventory sorting response times are measured and compared across personas
 
 ---
 
