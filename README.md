@@ -1,269 +1,346 @@
 # PetHub QA Engineering Portfolio
 
-[![CI](https://github.com/jcruciti/pethub-qa-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/jcruciti/pethub-qa-portfolio/actions/workflows/playwright.yml)
-[![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright\&logoColor=white)](https://playwright.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C2?logo=typescript\&logoColor=white)](https://www.typescriptlang.org/)
-[![Node](https://img.shields.io/badge/Node-%E2%89%A524-339933?logo=node.js\&logoColor=white)](.nvmrc)
+![CI](https://github.com/joecruciti/pethub-qa-portfolio/actions/workflows/ci.yml/badge.svg)
+![Playwright](https://img.shields.io/badge/Playwright-Test-45ba4b?logo=playwright&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
+![Node](https://img.shields.io/badge/Node-%3E%3D24-339933?logo=node.js&logoColor=white)
 
 A hands-on **QA Engineering and Test Automation portfolio** built around PetHub Local, a deterministic full-stack application designed for practicing and demonstrating modern software testing techniques.
 
-This repository demonstrates my work across **manual testing, test design, API testing, UI automation, accessibility testing, data validation, cross-system reconciliation, defect investigation, and CI/CD** using Playwright, TypeScript, REST APIs, Git, and related QA practices.
+This repository demonstrates a structured QA approach covering:
 
-> **Built AI-assisted, human-directed.** AI tools are used to support test analysis, test-case generation, prompt engineering, coverage review, and automation development. The test strategy, review, validation, technical decisions, and final deliverables are human-directed.
+- Manual test planning and execution
+- Functional and regression testing
+- Positive, negative, validation, authorization, resilience, contract, and reconciliation testing
+- UI testing with Playwright
+- REST API testing
+- Authentication and role-based access control (RBAC)
+- Data and persistence validation
+- Cross-system reconciliation
+- Accessibility testing
+- Defect investigation
+- Test execution and evidence management
+- Test automation architecture
+- Page Object Model (POM)
+- API clients and test-data builders
+- CI/CD validation
+- AI-assisted test analysis and test-case design
 
----
-
-## QA Focus
-
-This portfolio demonstrates practical QA activities across multiple testing levels:
-
-* Test planning and test-case design
-* Functional and regression testing
-* Positive, negative, validation, authorization, resilience, contract, and reconciliation testing
-* UI testing with Playwright
-* REST API testing
-* Authentication and authorization testing
-* Data and database validation
-* Cross-system data reconciliation
-* Accessibility testing
-* Defect identification and investigation
-* Test execution and evidence tracking
-* Page Object Model
-* API clients and test data builders
-* CI/CD integration
-* AI-assisted test design and test automation
-
-The project is intentionally structured to demonstrate not only **how to automate tests**, but also **how to think about quality across different layers of a system**.
+> **Built AI-assisted, human-directed.**
+>
+> AI is used as a productivity and analysis tool for test analysis, test-case generation, prompt engineering, coverage review, scenario exploration, and automation support. Test strategy, review, validation, technical decisions, execution, and final deliverables remain human-directed.
 
 ---
 
-## PetHub Local
+## Current Status
 
-**PetHub Local** is the primary system under test in this portfolio.
+> **Manual QA baseline completed. CT001–CT011 have been designed, executed, documented, and supported with execution evidence. The project is now transitioning into the test automation phase, where the manual baseline will be progressively automated and expanded with automated API, accessibility, data, and integration coverage.**
 
-It is a self-contained Express + lowdb application included in the repository. It provides deterministic data and multiple application surfaces, allowing the test suite to exercise realistic QA scenarios without depending on unstable public websites.
+---
 
-The application includes:
+# QA Focus
 
-| Surface         | URL       | Purpose                                       |
-| --------------- | --------- | --------------------------------------------- |
-| **Admin**       | `/`       | Operational dashboard and data management     |
-| **Storefront**  | `/shop`   | Inventory, cart and checkout                  |
-| **Clinic**      | `/clinic` | Veterinary appointment booking                |
-| **Operations**  | `/ops`    | Cross-system investigation and reconciliation |
-| **QA Test Lab** | `/lab`    | Deterministic UI automation challenges        |
+The project focuses on building a realistic QA Engineering workflow rather than simply creating automated scripts.
 
-The application also exposes REST APIs under `/api`.
+### Test Planning and Design
 
-### Important architectural concept: three data stores
+- Requirement and behavior analysis
+- Risk-based scenario identification
+- Positive and negative testing
+- Boundary and validation testing
+- Authorization and authentication testing
+- Resilience and delayed-response testing
+- Regression-oriented testing
+- API contract validation
+- Cross-system data reconciliation
 
-One of the main QA challenges in PetHub is its three-store architecture:
+### Test Execution
+
+- Manual test execution
+- Structured test case documentation
+- Execution tracking
+- Actual-result recording
+- Evidence collection
+- Defect-oriented investigation
+- Reproducible test environments
+- Database and application-state control
+
+### Test Automation
+
+The repository contains the supporting automation architecture and Playwright framework used to transition the manual QA baseline into automated regression coverage.
+
+The automation strategy includes:
+
+- Playwright Test
+- TypeScript
+- Page Object Model
+- Reusable fixtures
+- API clients
+- Typed models and DTOs
+- Test-data builders
+- Environment configuration
+- UI, API, accessibility, and integration layers
+- CI/CD execution
+
+The next automation phase focuses on converting the validated CT001–CT011 manual baseline into maintainable automated coverage.
+
+### AI-Assisted QA
+
+AI is used to support:
+
+- Test scenario discovery
+- Test-case drafting
+- Coverage analysis
+- Prompt engineering and refinement
+- Functional behavior analysis
+- Identification of missing validation scenarios
+- Test automation assistance
+- Review of test coverage and documentation
+
+Human review and validation remain part of the QA process.
+
+---
+
+# PetHub Local
+
+PetHub Local is a self-contained full-stack application used as the primary system under test.
+
+It provides multiple application surfaces representing different business and operational contexts:
+
+| Surface | Route | Purpose |
+|---|---|---|
+| Admin | `/` | Administrative operations and pet management |
+| Storefront | `/shop` | Inventory, cart, and checkout flows |
+| Clinic | `/clinic` | Veterinary appointment workflows |
+| Operations | `/ops` | Operational data and cross-system reconciliation |
+| QA Test Lab | `/lab` | QA-oriented testing and behavior exploration |
+| REST API | `/api` | Backend and integration testing |
+
+The application uses a deterministic local data model and LowDB-based persistence, making it suitable for reproducible QA execution.
+
+## System Architecture
+
+PetHub Local includes a three-store architecture consisting of:
+
+1. **Operational / write model**
+2. **CQRS-style read-model projections**
+3. **Downstream replicas**, including billing and analytics representations
+
+This architecture enables testing beyond isolated UI behavior and provides opportunities for:
+
+- Persistence validation
+- Read-model validation
+- Cross-system reconciliation
+- Data consistency testing
+- Integration testing
+- Event-driven behavior analysis
+
+---
+
+# Test Case Design
+
+The initial manual QA baseline consists of eleven documented test cases.
+
+| ID | Area | Type |
+|---|---|---|
+| CT001 | Storefront | Positive |
+| CT002 | Storefront | Positive |
+| CT003 | Storefront | Regression |
+| CT004 | Storefront | Resilience |
+| CT005 | Admin | Negative |
+| CT006 | Clinic | Positive |
+| CT007 | Clinic | Validation |
+| CT008 | Operations | Reconciliation |
+| CT009 | Platform API | Contract |
+| CT010 | Storefront | Authorization |
+| CT011 | Admin | Positive |
+
+The test cases intentionally cover different testing dimensions rather than relying exclusively on happy-path UI scenarios.
+
+### Test Layers
 
 ```text
-                    ┌─────────────────────┐
-                    │ Operational Store   │
-                    │   System of Record   │
-                    └──────────┬──────────┘
-                               │
-                         Domain Events
-                               │
-                ┌──────────────┴──────────────┐
-                ▼                             ▼
-      ┌──────────────────┐          ┌────────────────────┐
-      │ Read Model Store │          │ Downstream Systems │
-      │  CQRS-style      │          │    Replicas        │
-      └──────────────────┘          └────────────────────┘
-```
-
-The three JSON stores simulate:
-
-* an operational/write model;
-* CQRS-style read-model projections;
-* downstream replicas such as billing and analytics systems.
-
-This makes it possible to test not only whether an operation succeeds through the UI or API, but also whether the resulting data is correctly propagated across the system.
-
----
-
-## Test Case Design
-
-The repository contains a documented baseline of functional and integration test cases.
-
-### Current test-case baseline
-
-| ID    | Module       | Type           |
-| ----- | ------------ | -------------- |
-| CT001 | Storefront   | Positive       |
-| CT002 | Storefront   | Positive       |
-| CT003 | Storefront   | Regression     |
-| CT004 | Storefront   | Resilience     |
-| CT005 | Admin        | Negative       |
-| CT006 | Clinic       | Positive       |
-| CT007 | Clinic       | Validation     |
-| CT008 | Operations   | Reconciliation |
-| CT009 | Platform API | Contract       |
-| CT010 | Storefront   | Authorization  |
-
-The test cases cover several validation layers:
-
-```text
-UI
- │
- ├── Functional behavior
- ├── Validation
- └── Authorization
-       │
-       ▼
-API
- │
- ├── Contracts
- ├── Authentication / RBAC
- └── Business rules
-       │
-       ▼
-Data
- │
- ├── Persistence
- ├── Read models
- └── Downstream replicas
-       │
-       ▼
+UI / E2E
+   ↓
+API / Contract
+   ↓
+Data / Persistence
+   ↓
 Integration / Reconciliation
 ```
 
-Test-case documentation is available under:
+The objective is to validate behavior at the appropriate layer and avoid forcing every scenario through the UI.
 
-`docs/test-cases/`
-
-The overall QA plan is available at:
-
-`docs/QA_Test_Plan.xlsx`
-
----
-
-## Manual Test Execution
-
-The test cases are designed to support both manual and automated execution.
-
-For each execution, the QA process records:
-
-* execution ID;
-* test case ID;
-* environment;
-* execution date;
-* tester;
-* status;
-* actual result;
-* evidence;
-* defects;
-* execution notes.
-
-For example, **CT001 — Storefront — Valid Login** has already been manually executed against the local application and passed all seven defined steps.
-
-The test-case definition remains reusable, while each execution is recorded separately. This distinction allows the same test case to be executed repeatedly across builds and environments without losing execution history.
-
----
-
-## Defect-Oriented Testing
-
-PetHub contains intentionally seeded user personas and behaviors that provide controlled regression scenarios.
-
-Examples include:
-
-* `standard_user` — normal happy-path behavior;
-* `problem_user` — intentionally seeded functional defects;
-* `performance_user` — intentionally delayed responses;
-* `locked_out_user` — authentication rejection.
-
-These behaviors allow the test suite to distinguish between:
+Detailed test cases are maintained under:
 
 ```text
-Expected / Seeded Behavior
-            vs.
-Unexpected Application Defect
+docs/test-cases/
 ```
 
-This is particularly useful when demonstrating regression testing and defect analysis.
+The execution plan and results are maintained in:
+
+```text
+docs/QA_Test_Plan.xlsx
+```
 
 ---
 
-## AI-Assisted QA Workflow
+# Manual Test Execution
 
-AI is used as a **QA productivity and analysis tool**, not as a replacement for QA judgment.
+The manual QA baseline for **CT001–CT011 is complete**.
 
-The workflow includes:
+Each execution record captures:
+
+- Execution ID
+- Test Case ID
+- Environment
+- Execution date
+- Tester
+- Status
+- Actual result
+- Evidence
+- Defects, when applicable
+- Notes
+
+Execution results are maintained separately from reusable test-case definitions.
+
+### Execution Tracking
+
+```text
+Reusable Test Cases
+        ↓
+Test Execution
+        ↓
+Actual Results
+        ↓
+Evidence
+        ↓
+Defect / Observation
+```
+
+Execution results are maintained in:
+
+```text
+docs/QA_Test_Plan.xlsx
+```
+
+Evidence is organized under:
+
+```text
+docs/evidence/
+├── clinic/
+├── operations/
+├── platform-api/
+└── storefront/
+```
+
+This separation allows the test cases to remain reusable while execution history can grow over time.
+
+---
+
+# Defect-Oriented Testing
+
+PetHub Local includes intentionally seeded user personas designed to expose different application behaviors.
+
+| Persona | Intended Behavior |
+|---|---|
+| `standard_user` | Normal happy-path behavior |
+| `problem_user` | Intentionally seeded functional defects |
+| `performance_user` | Delayed responses |
+| `locked_out_user` | Authentication rejection |
+
+These personas are treated as part of the system's documented test behavior.
+
+The QA approach distinguishes between:
+
+- Expected seeded behavior
+- Expected validation behavior
+- Expected authorization behavior
+- Unexpected application defects
+
+This distinction is important when documenting actual results and determining whether a failed assertion represents a product defect or an intentionally simulated condition.
+
+---
+
+# AI-Assisted QA Workflow
+
+AI is integrated into the QA workflow as a support tool rather than as a replacement for QA judgment.
 
 ```text
 Requirements / Application Behavior
-              │
-              ▼
-       AI-assisted analysis
-              │
-              ▼
-       Test scenario design
-              │
-              ▼
-    Prompt engineering / refinement
-              │
-              ▼
-       Generated test cases
-              │
-              ▼
-       Human review & revision
-              │
-              ▼
-       Manual / automated execution
-              │
-              ▼
-       Results & defect analysis
+                ↓
+      AI-Assisted Analysis
+                ↓
+        Scenario Discovery
+                ↓
+       Prompt Engineering
+                ↓
+       Generated Test Cases
+                ↓
+        Human Review
+                ↓
+      Revision / Refinement
+                ↓
+        Test Execution
+                ↓
+     Results / Defect Analysis
+                ↓
+      Automation Development
 ```
 
-AI has been used in this project for:
+AI has been used to assist with:
 
-* generating initial test-case drafts;
-* improving test-case coverage;
-* refining test scenarios;
-* analyzing application behavior;
-* creating and iterating prompts;
-* identifying missing validation scenarios;
-* supporting automation development;
-* reviewing test coverage.
+- Initial test-case drafts
+- Scenario discovery
+- Functional behavior analysis
+- Coverage review
+- Negative and boundary scenarios
+- Validation scenarios
+- Authorization scenarios
+- Test-data considerations
+- Automation development
+- Documentation refinement
 
-The final test cases and automation are reviewed and validated before being considered part of the QA baseline.
+The resulting test cases are reviewed, revised, executed, and validated by the human QA process before becoming part of the project baseline.
 
-The test-case design prompt used in this project is available at:
+The prompt used for test-case generation and refinement is maintained at:
 
-`docs/test-cases/test-case-design-prompt.md`
+```text
+docs/test-cases/test-case-design-prompt.md
+```
 
 ---
 
-## What's Inside
+# What's Inside
 
-### QA Documentation
+The repository is organized around QA documentation, application code, automation architecture, test execution, and evidence.
 
 ```text
 docs/
 ├── QA_Test_Plan.xlsx
+├── evidence/
+│   ├── clinic/
+│   ├── operations/
+│   ├── platform-api/
+│   └── storefront/
+├── screenshots/
 └── test-cases/
-    ├── CT_ADMIN_005_admin.md
-    ├── CT_API_009_platform-api.md
-    ├── CT_CLINIC_006_clinic.md
+    ├── CT_*.md
     ├── CT_INDEX_001_test_case_index.md
-    ├── CT_OPS_008_operations.md
-    ├── CT_STORE_001_storefront.md
     └── test-case-design-prompt.md
 ```
 
-### Automation Architecture
+Automation architecture:
 
 ```text
 src/
 ├── core/
-├── pages/
-├── helpers/
-├── fixtures/
-├── builders/
-└── models/
+│   ├── builders/
+│   ├── fixtures/
+│   ├── helpers/
+│   ├── models/
+│   └── pages/
+└── ...
 
 tests/
 ├── local/
@@ -275,48 +352,59 @@ tests/
     └── <target>/
 ```
 
-The automation framework uses:
+The automation framework is designed around:
 
-* Playwright Test
-* TypeScript
-* Page Object Model
-* typed API clients
-* DTOs
-* fluent test-data builders
-* reusable fixtures
-* accessibility testing
-* environment-based configuration
+- Playwright Test
+- TypeScript
+- Page Object Model
+- Typed API clients
+- DTOs and models
+- Fluent test-data builders
+- Reusable fixtures
+- Accessibility testing
+- Environment-specific configuration
 
 ---
 
-## Quickstart
+# Quickstart
 
-Requires **Node 24** (see `.nvmrc`).
+## Requirements
+
+- Node.js `>=24.0.0`
+- npm
+- Git
+
+## Install Dependencies
 
 ```bash
 npm install
+```
+
+Install Playwright browsers:
+
+```bash
 npx playwright install
 ```
 
-Run the deterministic PetHub suite:
-
-```bash
-npm run test:local
-```
-
-Start the application manually:
+## Start PetHub Local
 
 ```bash
 npm run app:start
 ```
 
-The application will be available at:
+The application is available at:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-Stop the local server when finished:
+## Run the Local Test Suite
+
+```bash
+npm run test:local
+```
+
+## Stop PetHub Local
 
 ```bash
 npm run stop
@@ -324,290 +412,373 @@ npm run stop
 
 ---
 
-## Running Tests
+# Running Tests
 
-| Command                 | Purpose                                      |
-| ----------------------- | -------------------------------------------- |
-| `npm run verify`        | Lint + format + typecheck + local test suite |
-| `npm test`              | Full external + local suite                  |
-| `npm run test:local`    | PetHub Local suite                           |
-| `npm run test:external` | External targets                             |
-| `npm run test:ui`       | UI tests                                     |
-| `npm run test:api`      | API tests                                    |
-| `npm run test:a11y`     | Accessibility tests                          |
-| `npm run test:smoke`    | Smoke tests                                  |
-| `npm run test:critical` | Critical tests                               |
-| `npm run lint`          | ESLint                                       |
-| `npm run typecheck`     | TypeScript type checking                     |
-| `npm run format:check`  | Prettier validation                          |
-| `npm run report:local`  | Open local Playwright report                 |
+## Full Verification
 
-The local suite uses a single worker because PetHub Local uses shared JSON-based state.
+```bash
+npm run verify
+```
+
+Runs the project's validation pipeline, including linting, formatting, type checking, and local test execution.
+
+## Full Test Suite
+
+```bash
+npm test
+```
+
+## Local Tests
+
+```bash
+npm run test:local
+```
+
+## External Practice Targets
+
+```bash
+npm run test:external
+```
+
+## UI Tests
+
+```bash
+npm run test:ui
+```
+
+## API Tests
+
+```bash
+npm run test:api
+```
+
+## Accessibility Tests
+
+```bash
+npm run test:a11y
+```
+
+## Smoke Tests
+
+```bash
+npm run test:smoke
+```
+
+## Critical Tests
+
+```bash
+npm run test:critical
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## Type Checking
+
+```bash
+npm run typecheck
+```
+
+## Formatting Check
+
+```bash
+npm run format:check
+```
+
+## Local HTML Report
+
+```bash
+npm run report:local
+```
+
+The local suite is configured to use a single worker because the application relies on shared JSON-backed state during execution.
 
 ---
 
-## Accessibility Testing
+# Accessibility Testing
 
-Accessibility testing uses:
+Accessibility testing is implemented with:
 
-`@axe-core/playwright`
+```text
+@axe-core/playwright
+```
 
-The suite covers:
+The approach includes automated accessibility analysis across the main PetHub application surfaces:
 
-* Admin
-* Storefront
-* Clinic
-* Operations
-* QA Test Lab
+- Admin
+- Storefront
+- Clinic
+- Operations
+- QA Test Lab
 
-Tests focus on WCAG 2.0 / 2.1 A and AA-related violations and use automated Axe analysis as part of the QA strategy.
+The accessibility suite evaluates automated Axe findings related to WCAG 2.0 / 2.1 A and AA criteria.
+
+Accessibility testing is treated as one layer of the overall QA strategy rather than as a replacement for manual accessibility evaluation.
 
 ---
 
-## PetHub Local Platform API
+# Platform API Testing
 
-PetHub also includes a dedicated API-testing surface.
+PetHub Local exposes REST endpoints that provide opportunities for API and contract testing.
 
 Examples include:
 
 ```text
-GET  /api/version
-GET  /api/ready
-GET  /api/metrics
-GET  /api/openapi.json
+GET    /api/version
+GET    /api/ready
+GET    /api/metrics
+GET    /api/openapi.json
 
-POST /api/auth/login
-GET  /api/auth/me
+POST   /api/auth/login
+GET    /api/auth/me
 
-GET  /api/v2/pets
-POST /api/v2/pets
+GET    /api/v2/pets
+POST   /api/v2/pets
 DELETE /api/v2/pets/:id
 
-POST /api/v2/orders
+POST   /api/v2/orders
 
-GET  /api/v2/rate-limited
-GET  /api/v2/echo
+GET    /api/v2/rate-limited
+GET    /api/v2/echo
 
-POST /api/jobs
-GET  /api/jobs/:id
+POST   /api/v2/jobs
+GET    /api/v2/jobs
 ```
 
-These endpoints provide opportunities to test:
+API testing covers areas such as:
 
-* authentication;
-* RBAC;
-* validation;
-* HTTP status contracts;
-* pagination;
-* filtering;
-* sorting;
-* idempotency;
-* rate limiting;
-* asynchronous processing;
-* reflected-input handling;
-* API observability.
+- Authentication
+- Authorization
+- RBAC
+- Request validation
+- HTTP status-code contracts
+- Response structure
+- Persistence effects
+- Negative scenarios
+- Error handling
 
----
+Additional automation opportunities include:
 
-## Visual Tour
-
-PetHub Local provides several interfaces used during testing.
-
-### Admin Dashboard
-
-![Admin dashboard - dark theme](docs/screenshots/01-admin-dashboard.png)
-
-The admin dashboard exposes operational data, audit information, read models, downstream replicas, and API exploration.
-
-### Storefront
-
-![Storefront login](docs/screenshots/03-storefront-login.png)
-
-The Storefront provides the main customer-facing e-commerce workflow.
-
-### Inventory
-
-![Inventory grid](docs/screenshots/04-storefront-inventory.png)
-
-The inventory contains available, pending, and sold pets and provides data for sorting, filtering, and navigation scenarios.
-
-### Cart
-
-![Cart with three pets](docs/screenshots/07-storefront-cart.png)
-
-The cart supports session-based item management and checkout.
-
-### Operations
-
-![Operations portal overview](docs/screenshots/09-ops-overview.png)
-
-The Operations portal is designed specifically for QA investigation.
-
-### Cross-System Reconciliation
-
-![Cross-system comparison view](docs/screenshots/10-ops-comparisons.png)
-
-The comparison view exposes operational data alongside read-model and downstream representations.
-
-### Clinic
-
-![Clinic booking wizard](docs/screenshots/11-clinic-booking.png)
-
-The Clinic provides a multi-step veterinary appointment-booking workflow.
-
-### QA Test Lab
-
-![QA Test Lab overview](docs/screenshots/12-lab-home.png)
-
-The QA Test Lab contains deterministic UI automation challenges covering forms, dynamic content, dialogs, tables, widgets, menus, frames, popups, and shadow DOM.
+- Pagination
+- Filtering
+- Sorting
+- Idempotency
+- Rate limiting
+- Asynchronous jobs
+- Reflected input
+- Observability endpoints
 
 ---
 
-## External Practice Targets
+# Visual Tour
 
-The repository also contains examples targeting public demonstration applications:
-
-### Swagger Petstore
-
-Public REST API and UI used for API-testing practice.
-
-### Sauce Demo
-
-Public e-commerce demonstration application used for UI automation patterns such as authentication state reuse.
-
-These external targets are supplementary. **PetHub Local is the primary system under test and the main focus of this portfolio.**
-
----
-
-## Test Automation Strategy
-
-The automation follows a layered approach:
+Screenshots documenting the application and QA exploration are maintained under:
 
 ```text
-                 ┌─────────────────┐
-                 │   UI / E2E      │
-                 │    Playwright   │
-                 └────────┬────────┘
-                          │
-                 ┌────────▼────────┐
-                 │       API       │
-                 │ REST / Contract │
-                 └────────┬────────┘
-                          │
-                 ┌────────▼────────┐
-                 │      Data       │
-                 │   Persistence   │
-                 └────────┬────────┘
-                          │
-                 ┌────────▼────────┐
-                 │  Integration    │
-                 │ Reconciliation  │
-                 └─────────────────┘
+docs/screenshots/
 ```
 
-The goal is not to test everything through the UI.
+The visual documentation includes the main PetHub surfaces, such as:
 
-Tests are placed at the appropriate layer so that:
+- Admin
+- Storefront login
+- Storefront inventory
+- Cart
+- Operations overview
+- Operations comparisons
+- Clinic
+- QA Test Lab
 
-* UI tests validate user-facing behavior;
-* API tests validate contracts and business rules;
-* data checks validate persistence and projections;
-* integration tests validate communication between system components.
-
----
-
-## CI/CD
-
-The repository uses GitHub Actions for automated validation.
-
-The CI strategy includes:
-
-* linting;
-* formatting;
-* TypeScript type checking;
-* Playwright execution;
-* smoke and critical test tiers;
-* local deterministic testing.
-
-External public targets are treated separately from the deterministic PetHub suite because their availability and behavior are outside the control of this repository.
+Screenshots are supplementary documentation and are not treated as a substitute for executable tests or structured execution evidence.
 
 ---
 
-## Repository Structure
+# External Practice Targets
+
+The repository also contains support for external practice targets, including:
+
+- Swagger Petstore
+- Sauce Demo
+
+These targets are supplementary.
+
+**PetHub Local remains the primary system under test and the main focus of the portfolio.**
+
+---
+
+# Test Automation Strategy
+
+The automation strategy follows a layered approach.
 
 ```text
-apps/
-└── pethub-local/          # PetHub Local application
+                 UI / E2E
+                    ↓
+              API / Contract
+                    ↓
+            Data / Persistence
+                    ↓
+         Integration / Reconciliation
+```
 
-src/
-├── core/
-├── pages/
-├── helpers/
-├── fixtures/
-├── builders/
-└── models/
+The objective is not to test every behavior through the UI.
 
-tests/
-├── local/
-└── external/
+Instead:
 
-docs/
-├── QA_Test_Plan.xlsx      # QA test plan
-└── test-cases/            # Test-case documentation
+- UI tests validate critical user journeys and visible behavior.
+- API tests validate backend contracts and authorization.
+- Data tests validate persistence and state changes.
+- Integration tests validate consistency between system representations.
+- Accessibility tests validate automated accessibility rules at the appropriate UI layer.
 
-playwright.config.ts
-playwright.local.config.ts
-test-targets.config.ts
-package.json
+The validated manual baseline provides the behavioral foundation for the automation phase.
+
+The next step is to progressively automate CT001–CT011 while preserving the same intent, expected behavior, evidence strategy, and traceability.
+
+---
+
+# CI/CD
+
+The project uses GitHub Actions for automated validation.
+
+The CI workflow is designed to support:
+
+- Dependency installation
+- Linting
+- Formatting validation
+- Type checking
+- Playwright execution
+- Smoke and critical test suites
+- Deterministic local test execution
+
+External practice targets are maintained separately from the deterministic PetHub Local validation flow.
+
+---
+
+# Repository Structure
+
+```text
+.
+├── apps/
+│   └── pethub-local/
+│
+├── src/
+│   └── core/
+│       ├── builders/
+│       ├── fixtures/
+│       ├── helpers/
+│       ├── models/
+│       └── pages/
+│
+├── tests/
+│   ├── local/
+│   │   └── pethub-local/
+│   │       ├── ui/
+│   │       ├── api/
+│   │       └── a11y/
+│   │
+│   └── external/
+│       └── <target>/
+│
+├── docs/
+│   ├── QA_Test_Plan.xlsx
+│   ├── evidence/
+│   ├── screenshots/
+│   └── test-cases/
+│
+├── playwright.config.ts
+├── playwright.local.config.ts
+├── test-targets.config.ts
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Project Background
+# Project Background
 
-This repository originated from the `playwright-qa-portfolio` project and has been developed into my personal QA engineering portfolio.
+The project originated from the `playwright-qa-portfolio` codebase and evolved into a personal QA Engineering portfolio.
 
-The PetHub application and original project structure are retained as the system-under-test foundation. My work in this repository focuses on **QA analysis, test design, test execution, automation, documentation, and continuous improvement**.
+The original PetHub application and project components are retained as the system-under-test foundation.
 
-The repository history is intentionally preserved to show the evolution of the project.
+The QA contribution focuses on:
 
----
+- QA analysis
+- Test strategy
+- Test-case design
+- Manual execution
+- Evidence collection
+- API testing
+- Data validation
+- Cross-system reconciliation
+- Test automation
+- Accessibility testing
+- CI/CD validation
+- Documentation
+- Defect investigation
+- AI-assisted QA workflows
 
-## Current QA Roadmap
-
-The project is being developed incrementally.
-
-### Completed
-
-* [x] PetHub Local environment setup
-* [x] QA test strategy
-* [x] Test-case baseline CT001–CT010
-* [x] Test plan
-* [x] Test-case documentation
-* [x] AI-assisted test-case design workflow
-* [x] Git/GitHub repository setup
-* [x] First manual test execution
-* [x] CT001 manual execution — PASS
-
-### In Progress
-
-* [ ] Execute remaining manual test cases
-* [ ] Record execution results
-* [ ] Document discovered defects
-* [ ] Implement Playwright automation for the baseline test cases
-* [ ] Expand API automation
-* [ ] Add data/reconciliation assertions
-* [ ] Integrate QA execution results with CI/CD
+The repository intentionally preserves the distinction between the original application/framework components and the QA engineering work developed around them.
 
 ---
 
-## Maintenance
+# Current QA Roadmap
 
-For a clean environment:
+## Completed
+
+- PetHub Local environment setup
+- QA strategy definition
+- Test-case design
+- CT001–CT011
+- Test execution planning
+- Test-case documentation
+- AI-assisted test-case workflow
+- Git/GitHub setup
+- Manual execution of CT001–CT011
+- Execution tracking
+- Evidence collection
+- API validation and authorization testing
+- Cross-system reconciliation testing
+- Database reset procedure
+- Application restart procedure for Clinic in-memory state
+- Manual QA baseline
+
+## Next Phase — Test Automation
+
+- Automate CT001–CT011 with Playwright
+- Build reusable fixtures
+- Build reusable test-data builders
+- Expand API automation
+- Add persistence and state assertions
+- Automate cross-system reconciliation checks
+- Expand accessibility coverage
+- Integrate automated regression coverage into CI/CD
+- Establish maintainable smoke and critical suites
+- Continue expanding coverage based on risk and application behavior
+
+The goal is to evolve the project from a completed manual QA baseline into a maintainable, layered QA automation portfolio.
+
+---
+
+# Maintenance
+
+Install dependencies from the lockfile:
 
 ```bash
 npm ci
+```
+
+Run project diagnostics:
+
+```bash
 npm run doctor
+```
+
+Run the complete verification flow:
+
+```bash
 npm run verify
 ```
 
@@ -617,16 +788,34 @@ If Playwright browsers are not installed:
 npx playwright install
 ```
 
-For additional repository maintenance guidance, see the existing project documentation under `docs/`.
-
 ---
 
-## Attribution and License
+# Attribution
 
-This repository contains the PetHub application and project components originating from the upstream `playwright-qa-portfolio` project.
+The original PetHub application and project components originated from the upstream:
 
-The original project attribution and licensing terms are retained where applicable. This portfolio should not be interpreted as a claim of authorship of the original application or framework.
+```text
+playwright-qa-portfolio
+```
 
-My contributions in this repository focus on **QA engineering, test strategy, test design, test execution, automation, documentation, analysis, and AI-assisted testing workflows**.
+Original attribution and licensing information are retained where applicable.
 
-See the repository's license and upstream project documentation for the applicable terms.
+This repository does **not** claim authorship of the original PetHub application or framework components.
+
+The primary contribution represented by this portfolio is the QA Engineering work developed around the system under test, including:
+
+- QA strategy
+- Test design
+- Manual test execution
+- Test evidence
+- API testing
+- Data validation
+- Cross-system reconciliation
+- Test automation architecture
+- Accessibility testing
+- CI/CD validation
+- Documentation
+- Defect-oriented testing
+- AI-assisted QA workflows
+- Continuous improvement of the testing process
+````
